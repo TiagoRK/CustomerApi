@@ -1,4 +1,5 @@
-using CustomerApi.Web.Configurations;
+﻿using CustomerApi.Web.Configurations;
+using CustomerApi.Web.Middlewares;
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -22,6 +23,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddServiceConfigs(appLogger, builder);
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,6 +38,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 
