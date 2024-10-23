@@ -1,4 +1,4 @@
-namespace CustomerApi.Tests;
+namespace CustomerApi.UnitTests;
 
 public class Tests
 {

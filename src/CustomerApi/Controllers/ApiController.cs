@@ -17,7 +17,7 @@ public class ApiController : ControllerBase
       return UnprocessableEntity(response.Errors);
     }
 
-    if (object.Equals(response, default(TValue)))
+    if (Equals(response.Value, default(TValue)))
     {
       return Ok();
     }
