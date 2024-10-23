@@ -10,9 +10,9 @@ public static class MediatrConfigs
   {
     var mediatRAssemblies = new[]
       {
-              Assembly.GetAssembly(typeof(Customer)),
-              Assembly.GetAssembly(typeof(CreateCustomerCommand))
-            };
+        Assembly.GetAssembly(typeof(Customer)),
+        Assembly.GetAssembly(typeof(CreateCustomerCommand))
+      };
 
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(mediatRAssemblies!));
 

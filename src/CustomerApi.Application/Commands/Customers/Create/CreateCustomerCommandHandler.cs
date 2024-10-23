@@ -22,7 +22,8 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
       return request.ValidationErrors;
     }
 
-    var businessErrors = await Validate(request);
+    using var validationCts = new CancellationTokenSource();
+    var businessErrors = await Validate(request, validationCts.Token);
     if (businessErrors.Count != 0)
     {
       return businessErrors;
