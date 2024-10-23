@@ -41,6 +41,6 @@ public class CustomerRepository(CustomerDbContext dbContext) : ICustomerReposito
 
   public async Task<bool> IsEmailUnique(string email)
   {
-    return await DbContext.Customers.AnyAsync(customer => customer.Email.Equals(email));
+    return !await DbContext.Customers.AnyAsync(customer => customer.Email.Equals(email));
   }
 }

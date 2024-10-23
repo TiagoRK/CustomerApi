@@ -4,24 +4,18 @@ using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Create;
 
-public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerCommand>, IRequestHandler<CreateCustomerCommand, Result<long, Error>>
+public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerCommand>, IRequestHandler<CreateCustomerCommand, Result<object, Error>>
 {
-  private readonly ICustomerRepository CustomerRepository;
+  private readonly ICustomerRepository _customerRepository;
 
   public CreateCustomerCommandHandler(ICustomerRepository customerRepository)
   {
-    CustomerRepository = customerRepository;
+    _customerRepository = customerRepository;
 
-    AddSyncBusinessRule(command =>
-        command.BirthDate <= DateTime.Today.AddYears(-18),
-        CustomerErrors.BirthDateIsNotValid());
-
-    AddAsyncBusinessRule(async command =>
-        await CustomerRepository.IsEmailUnique(command.Email),
-        CustomerErrors.EmailIsNotUnique());
+    AddBusinessRules();
   }
 
-  async Task<Result<long, Error>> IRequestHandler<CreateCustomerCommand, Result<long, Error>>.Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+  async Task<Result<object, Error>> IRequestHandler<CreateCustomerCommand, Result<object, Error>>.Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
   {
     if (!request.IsValid())
     {
@@ -35,9 +29,19 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
     }
 
     var newCustomer = new Customer(request.Name, request.BirthDate, request.Email);
-    var id = await CustomerRepository.CreateCustomer(newCustomer);
+    var id = await _customerRepository.CreateCustomer(newCustomer);
 
-    return id;
+    return new { id };
   }
 
+  private void AddBusinessRules()
+  {
+    AddSyncBusinessRule(command =>
+        command.BirthDate <= DateTime.Today.AddYears(-18),
+        CustomerErrors.BirthDateIsNotValid());
+
+    AddAsyncBusinessRule(async command =>
+        await _customerRepository.IsEmailUnique(command.Email),
+        CustomerErrors.EmailIsNotUnique());
+  }
 }

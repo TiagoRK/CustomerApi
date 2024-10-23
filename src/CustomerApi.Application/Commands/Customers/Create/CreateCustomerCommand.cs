@@ -5,7 +5,7 @@ using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Create;
 
-public class CreateCustomerCommand : CommandValidator, IRequest<Result<long, Error>>
+public class CreateCustomerCommand : CommandValidator, IRequest<Result<object, Error>>
 {
   public string Name { get; set; }
   public DateTime BirthDate { get; set; }
