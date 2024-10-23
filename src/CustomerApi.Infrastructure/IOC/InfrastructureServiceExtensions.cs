@@ -15,7 +15,7 @@ public static class InfrastructureServiceExtensions
     ConfigurationManager config,
     ILogger logger)
   {
-    string? connectionString = config.GetConnectionString("DbConnection");
+    string? connectionString = config.GetConnectionString("Database");
     services.AddDbContext<CustomerDbContext>(options =>
      options.UseNpgsql(connectionString));
 
