@@ -1,4 +1,5 @@
 ﻿using CustomerApi.Application.Commands.Customers.Create;
+using CustomerApi.Application.Commands.Customers.Delete;
 using CustomerApi.Application.Queries.Customers.GetByEmail;
 using CustomerApi.Application.Queries.Customers.GetPaged;
 using CustomerApi.Domain.Customers.DTO;
@@ -64,6 +65,21 @@ public class CustomerController(IMediator mediator) : ApiController
     };
 
     var result = await _mediator.Send(query);
+
+    return CustomResponse(result);
+  }
+
+  [Produces("application/json")]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [HttpDelete(Name = "DeleteCustomerByEmail")]
+  public async Task<IActionResult> DeleteCustomerByEmail([FromBody] DeleteCustomerRequest request)
+  {
+    var command = new DeleteCustomerByEmailCommand()
+    {
+      Email = request.Email
+    };
+
+    var result = await _mediator.Send(command);
 
     return CustomResponse(result);
   }

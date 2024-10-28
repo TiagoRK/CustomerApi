@@ -3,21 +3,46 @@ using CustomerApi.SharedKernel;
 using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Delete;
-public class DeleteCustomerByEmailCommandHandler(ICustomerRepository customerRepository) : BusinessValidator<DeleteCustomerByEmailCommand>, IRequestHandler<DeleteCustomerByEmailCommand, Result<object, Error>
+public class DeleteCustomerByEmailCommandHandler : BusinessValidator<DeleteCustomerByEmailCommand>, IRequestHandler<DeleteCustomerByEmailCommand, Result<object, Error>>
 {
-  private readonly ICustomerRepository _customerRepository = customerRepository;
+  private readonly ICustomerRepository _customerRepository;
+
+  public DeleteCustomerByEmailCommandHandler(ICustomerRepository customerRepository)
+  {
+    _customerRepository = customerRepository;
+
+    AddBusinessRules();
+  }
 
   public async Task<Result<object, Error>> Handle(DeleteCustomerByEmailCommand request, CancellationToken cancellationToken)
   {
-    var customerToDelete = await _customerRepository.GetByEmail(request.Email);
-
-    if (customerToDelete == null)
+    if (!request.IsValid())
     {
-      return CustomerErrors.CustomerWithEmailNotFound(request.Email);
+      return request.ValidationErrors;
     }
 
-    await _customerRepository.Delete(customerToDelete);
+    var (errors, values) = await Validate(request, cancellationToken);
+    if (errors.Count != 0)
+    {
+      return errors;
+    }
 
-    throw new NotImplementedException();
+    var customerToDelete = values[nameof(Customer)] as Customer;
+    await _customerRepository.Delete(customerToDelete!);
+
+    return Result<object, Error>.SuccessWithNull();
+  }
+
+  private void AddBusinessRules()
+  {
+    AddValueReturningAsyncBusinessRule(
+        nameof(Customer),
+        async command =>
+        {
+          var customer = await _customerRepository.GetByEmail(command.Email);
+          return (customer != null, customer!);
+        },
+        command => CustomerErrors.CustomerWithEmailNotFound(command.Email)
+    );
   }
 }

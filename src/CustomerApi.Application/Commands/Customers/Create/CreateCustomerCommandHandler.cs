@@ -23,10 +23,10 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
     }
 
     using var validationCts = new CancellationTokenSource();
-    var businessErrors = await Validate(request, validationCts.Token);
-    if (businessErrors.Count != 0)
+    var (errors, _) = await Validate(request, validationCts.Token);
+    if (errors.Count != 0)
     {
-      return businessErrors;
+      return errors;
     }
 
     var newCustomer = new Customer(request.Name, request.BirthDate, request.Email);
@@ -39,10 +39,10 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
   {
     AddSyncBusinessRule(command =>
         command.BirthDate <= DateTime.Today.AddYears(-18),
-        CustomerErrors.BirthDateIsNotValid());
+        command => CustomerErrors.BirthDateIsNotValid());
 
     AddAsyncBusinessRule(async command =>
         await _customerRepository.IsEmailUnique(command.Email),
-        CustomerErrors.EmailIsNotUnique());
+        command => CustomerErrors.EmailIsNotUnique());
   }
 }
