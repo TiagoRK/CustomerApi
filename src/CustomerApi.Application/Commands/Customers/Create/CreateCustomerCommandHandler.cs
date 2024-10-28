@@ -15,7 +15,7 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
     AddBusinessRules();
   }
 
-  async Task<Result<object, Error>> IRequestHandler<CreateCustomerCommand, Result<object, Error>>.Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+  public async Task<Result<object, Error>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
   {
     if (!request.IsValid())
     {
@@ -30,9 +30,9 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
     }
 
     var newCustomer = new Customer(request.Name, request.BirthDate, request.Email);
-    var id = await _customerRepository.CreateCustomer(newCustomer);
+    await _customerRepository.Create(newCustomer);
 
-    return new { id };
+    return Result<object, Error>.SuccessWithNull();
   }
 
   private void AddBusinessRules()

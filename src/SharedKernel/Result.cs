@@ -27,5 +27,7 @@ public class Result<TValue, TError>
 
   public static implicit operator Result<TValue, TError>(List<TError> errors) => new(errors);
 
+  public static Result<TValue, TError> SuccessWithNull() => new(default(TValue)!);
+
   public bool IsSuccess => _isSuccess;
 }

@@ -1,4 +1,5 @@
 ﻿using CustomerApi.Domain.Customers;
+using CustomerApi.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CustomerApi.Infrastructure.Data.Repositories;
@@ -7,7 +8,7 @@ public class CustomerRepository(CustomerDbContext dbContext) : ICustomerReposito
 {
   private readonly CustomerDbContext _dbContext = dbContext;
 
-  public async Task<long> CreateCustomer(Customer customer)
+  public async Task<long> Create(Customer customer)
   {
     await _dbContext.Customers.AddAsync(customer);
     await _dbContext.SaveChangesAsync();
@@ -15,7 +16,7 @@ public class CustomerRepository(CustomerDbContext dbContext) : ICustomerReposito
     return customer.Id;
   }
 
-  public async Task<Customer?> GetCustomerById(long id)
+  public async Task<Customer?> GetById(long id)
   {
     var customer = await _dbContext.Customers.FirstOrDefaultAsync(customer => customer.Id == id);
 
@@ -27,9 +28,9 @@ public class CustomerRepository(CustomerDbContext dbContext) : ICustomerReposito
     return customer;
   }
 
-  public async Task<Customer?> GetCustomerByName(string name)
+  public async Task<Customer?> GetByEmail(string email)
   {
-    var customer = await _dbContext.Customers.FirstOrDefaultAsync(customer => customer.Name == name);
+    var customer = await _dbContext.Customers.FirstOrDefaultAsync(customer => customer.Email == email);
 
     if (customer == null)
     {
@@ -41,6 +42,27 @@ public class CustomerRepository(CustomerDbContext dbContext) : ICustomerReposito
 
   public async Task<bool> IsEmailUnique(string email)
   {
-    return !await _dbContext.Customers.AnyAsync(customer => customer.Email.Equals(email));
+    return !await _dbContext.Customers.AsNoTracking().AnyAsync(customer => customer.Email.Equals(email));
+  }
+
+  public async Task<PagedResponse<Customer>> GetPaginated(int pageSize, int pageNumber)
+  {
+    var totalRecords = await _dbContext.Customers.AsNoTracking().CountAsync();
+
+    var customers = await _dbContext.Customers.AsNoTracking()
+        .OrderBy(x => x.Id)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    var pagedResponse = new PagedResponse<Customer>(customers, pageNumber, pageSize, totalRecords);
+
+    return pagedResponse;
+  }
+
+  public async Task Delete(Customer customer)
+  {
+    _dbContext.Customers.Remove(customer);
+    await _dbContext.SaveChangesAsync();
   }
 }
