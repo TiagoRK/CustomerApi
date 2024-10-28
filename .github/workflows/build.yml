@@ -1,4 +1,4 @@
-name: Customer API | Release
+name: Customer API | Build
 
 on:
   push:
