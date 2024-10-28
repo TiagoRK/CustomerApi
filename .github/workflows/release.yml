@@ -1,0 +1,42 @@
+name: Release API
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for deployment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - production
+          - hlg
+          - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dotnet-app
+
+      - name: Set Slot Name
+        id: slot
+        run: |
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            echo "slot-name=production" >> $GITHUB_ENV
+          elif [ "${{ github.event.inputs.environment }}" == "hlg" ]; then
+            echo "slot-name=hlg" >> $GITHUB_ENV
+          else
+            echo "slot-name=dev" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'customer-api'
+          slot-name: ${{ env.slot-name }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: './dotnet-app'
