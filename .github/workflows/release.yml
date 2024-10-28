@@ -1,4 +1,4 @@
-name: Release API
+name: Customer API | Release
 
 on:
   workflow_dispatch:
