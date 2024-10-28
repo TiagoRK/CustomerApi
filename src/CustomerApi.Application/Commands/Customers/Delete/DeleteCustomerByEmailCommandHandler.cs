@@ -3,7 +3,7 @@ using CustomerApi.SharedKernel;
 using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Delete;
-public class DeleteCustomerByEmailCommandHandler(ICustomerRepository customerRepository) : BusinessValidator<DeleteCustomerByEmailCommand>, IRequestHandler<DeleteCustomerByEmailCommand, Result<object, Error>
+public class DeleteCustomerByEmailCommandHandler(ICustomerRepository customerRepository) : BusinessValidator<DeleteCustomerByEmailCommand>, IRequestHandler<DeleteCustomerByEmailCommand, Result<object, Error>>
 {
   private readonly ICustomerRepository _customerRepository = customerRepository;
 
