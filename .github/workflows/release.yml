@@ -15,9 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifact
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v6
         with:
+          run_id: ${{ github.event.workflow_run.id }}
           name: dotnet-app
+          path: ./
+          search_artifacts: true
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
