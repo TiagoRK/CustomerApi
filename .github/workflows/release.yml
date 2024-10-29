@@ -1,14 +1,13 @@
 name: Customer API | Release
 
 on:
-  workflow_run:
-    workflows: ["Customer API | Build"]
-    types:
-      - completed
+  workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: tiago-k-api-customer
-  AZURE_WEBAPP_PACKAGE_PATH: './'
+  AZURE_REGISTRY_NAME: tiagokcontainerregistry
+  AZURE_IMAGE_NAME: customer-api
+  AZURE_IMAGE_TAG: latest
 
 permissions:
   actions: read
@@ -20,16 +19,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Download Artifact
-        uses: dawidd6/action-download-artifact@v6
+      - name: Log in to Azure
+        uses: azure/login@v1
         with:
-          run_id: ${{ github.event.workflow_run.id }}
-          name: dotnet-app
-          path: ./
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy to Azure App Service
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          images: '${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }}:${{ env.AZURE_IMAGE_TAG }}'
