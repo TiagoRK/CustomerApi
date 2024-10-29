@@ -10,6 +10,12 @@ env:
   AZURE_WEBAPP_NAME: tiago-k-api-customer
   AZURE_WEBAPP_PACKAGE_PATH: '.'
 
+permissions:
+  actions: read
+  contents: read
+  packages: read
+  deployments: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
