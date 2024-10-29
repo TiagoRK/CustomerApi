@@ -15,7 +15,8 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dotnet-app
-
+          run-id: ${{ github.event.workflow_run.id }}
+          
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
