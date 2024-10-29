@@ -1,7 +1,10 @@
 name: Customer API | Release
 
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Customer API | Build"]
+    types:
+      - completed
 
 env:
   AZURE_WEBAPP_NAME: tiago-k-api-customer
@@ -15,8 +18,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dotnet-app
-          run-id: ${{ github.event.workflow_run.id }}
-          
+
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
