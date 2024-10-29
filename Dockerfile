@@ -5,7 +5,7 @@ COPY ./src ./
 
 RUN dotnet restore CustomerApi/CustomerApi.Web.csproj
 
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish -c Release -o out CustomerApi/CustomerApi.Web.csproj
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
@@ -14,7 +14,7 @@ WORKDIR /app
 RUN adduser --disabled-password --home /appuser appuser
 USER appuser
 
-COPY --from=build /app/publish ./
+COPY --from=build /app/out ./
 
 EXPOSE 8080
 
