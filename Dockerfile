@@ -1,11 +1,10 @@
 # Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
+COPY ./src ./
 
-COPY *.csproj ./
-RUN dotnet restore
+RUN dotnet restore CustomerApi/CustomerApi.Web.csproj
 
-COPY . ./
 RUN dotnet publish -c Release -o /app/publish
 
 # Stage 2: Runtime
