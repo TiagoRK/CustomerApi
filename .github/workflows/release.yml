@@ -2,16 +2,6 @@ name: Customer API | Release
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target environment for deployment'
-        required: true
-        default: 'dev'
-        type: choice
-        options:
-          - production
-          - hlg
-          - dev
 
 env:
   AZURE_WEBAPP_NAME: tiago-k-api-customer
@@ -26,21 +16,9 @@ jobs:
         with:
           name: dotnet-app
 
-      - name: Set Slot Name
-        id: slot
-        run: |
-          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
-            echo "slot-name=production" >> $GITHUB_ENV
-          elif [ "${{ github.event.inputs.environment }}" == "hlg" ]; then
-            echo "slot-name=hlg" >> $GITHUB_ENV
-          else
-            echo "slot-name=dev" >> $GITHUB_ENV
-          fi
-
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          slot-name: ${{ env.slot-name }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dotnet-app'
