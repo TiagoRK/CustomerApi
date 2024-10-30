@@ -38,13 +38,15 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
-      - name: Extract Secrets with env. Prefix
+      - name: Extract Secrets with env_ Prefix
         id: extract-secrets
         run: |
           echo "Extracting env-prefixed secrets..."
-          for secret in $(printenv | grep ^env\.); do
-            key=$(echo "$secret" | sed 's/^env\.//g' | cut -d= -f1)
+          for secret in $(printenv | grep ^env_); do
+            # Remove only the 'env_' prefix
+            key=$(echo "$secret" | sed 's/^env_//g' | cut -d= -f1)
             value=$(echo "$secret" | cut -d= -f2-)
+            # Append to env-vars.txt
             echo "$key=$value" >> env-vars.txt
           done
 
