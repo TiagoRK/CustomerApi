@@ -7,6 +7,7 @@ env:
   AZURE_REGISTRY_NAME: tiagokcontainerregistry
   AZURE_IMAGE_NAME: customer-api
   AZURE_IMAGE_TAG: latest
+  ENV_ConnectionStrings__Database: ${{ secrets.ENV_CONNECTIONSTRINGS__DATABASE }}
 
 permissions:
   id-token: write
