@@ -42,15 +42,22 @@ jobs:
         run: |
           echo "Extracting env-prefixed secrets..."
           found=false
-          > env-vars.txt
+          > env-vars.txt  # Clear or create the file
       
+          # Read environment variables
           while IFS= read -r secret; do
             if [[ $secret == ENV_* ]]; then
               found=true
               key=$(echo "$secret" | cut -d= -f1 | sed 's/^ENV_//')
-              value=$(echo "$secret" | cut -d= -f2- | sed "s/'/'\"'\"'/g")
-              echo "$key=\"$value\"" >> env-vars.txt
-              echo "Extracted: $key=$value"
+              value=$(echo "$secret" | cut -d= -f2-)
+              
+              # Debug: Show what is being extracted
+              echo "Debug: key='$key', value='$value'"
+      
+              # Escape any double quotes in the value and wrap it in quotes
+              value=$(echo "$value" | sed 's/"/\\"/g')
+              echo "$key=\"$value\"" >> env-vars.txt  
+              echo "Extracted: $key=\"$value\""
             fi
           done < <(printenv)
       
