@@ -45,15 +45,15 @@ jobs:
           for secret in $(printenv | grep ^ENV_); do
             found=true
             key=$(echo "$secret" | sed 's/^ENV_//g' | cut -d= -f1)
-            value=$(echo "$secret" | cut -d= -f2-)
-            echo "$key='$value'" >> env-vars.txt   # Adding single quotes around $value
+            value=$(echo "$secret" | cut -d= -f2- | sed "s/'/'\"'\"'/g")  # Escape single quotes inside the value
+            echo "$key=\"$value\"" >> env-vars.txt  # Double-quote the entire value
             echo "Extracted: $key"
           done
           if [ "$found" = false ]; then
             echo "No env-prefixed secrets found."
             exit 1
           fi
-
+          
       - name: Display Transformed Environment Variables (Optional)
         run: cat env-vars.txt
 
