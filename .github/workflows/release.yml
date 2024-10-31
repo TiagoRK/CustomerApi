@@ -42,10 +42,12 @@ jobs:
         run: |
           echo "Extracting env-prefixed secrets..."
           found=false
+          IFS=$'\n'
           for secret in $(printenv | grep ^ENV_); do
             found=true
             key=$(echo "$secret" | sed 's/^ENV_//g' | cut -d= -f1)
             value=$(echo "$secret" | cut -d= -f2-)
+            # Append the key-value pair to the env-vars file
             echo "$key=$value" >> env-vars.txt
             echo "Extracted: $key"
           done
@@ -53,6 +55,7 @@ jobs:
             echo "No env-prefixed secrets found."
             exit 1
           fi
+          unset IFS
 
       - name: Display Transformed Environment Variables (Optional)
         run: cat env-vars.txt
