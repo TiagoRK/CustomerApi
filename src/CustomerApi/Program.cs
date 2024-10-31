@@ -37,6 +37,8 @@ app.UseAuthorization();
 
 app.UseExceptionHandler();
 
+app.UseHealthChecks("/health-check");
+
 app.MapControllers();
 
 app.Run();
