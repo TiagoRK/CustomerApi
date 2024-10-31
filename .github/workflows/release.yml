@@ -42,17 +42,15 @@ jobs:
         run: |
           echo "Extracting env-prefixed secrets..."
           found=false
-          # Create or clear the env-vars.txt file
           > env-vars.txt
       
-          # Read environment variables line by line
           while IFS= read -r secret; do
             if [[ $secret == ENV_* ]]; then
               found=true
-              key=$(echo "$secret" | sed 's/^ENV_//g' | cut -d= -f1)
-              value=$(echo "$secret" | cut -d= -f2- | sed "s/'/'\"'\"'/g")  # Escape single quotes inside the value
-              echo "$key=\"$value\"" >> env-vars.txt  # Double-quote the entire value
-              echo "Extracted: $key"
+              key=$(echo "$secret" | cut -d= -f1 | sed 's/^ENV_//')
+              value=$(echo "$secret" | cut -d= -f2- | sed "s/'/'\"'\"'/g")
+              echo "$key=\"$value\"" >> env-vars.txt
+              echo "Extracted: $key=$value"
             fi
           done < <(printenv)
       
@@ -67,6 +65,6 @@ jobs:
       - name: Deploy with Helm
         run: |
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
-            --set image.repository="${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }}" \
-            --set image.tag="${{ env.AZURE_IMAGE_TAG }}" \
+            --set image.repository="***.azurecr.io/" \
+            --set image.tag="" \
             $(awk '{print "--set env."$0}' env-vars.txt)
