@@ -97,7 +97,7 @@ livenessProbe:
   httpGet:
     path: /health-check
     port: 8080
-  initialDelaySeconds: 5
+  initialDelaySeconds: 15
   periodSeconds: 10
   timeoutSeconds: 1
   failureThreshold: 3
@@ -105,7 +105,7 @@ readinessProbe:
   httpGet:
     path: /health-check
     port: 8080
-  initialDelaySeconds: 5
+  initialDelaySeconds: 15
   periodSeconds: 10
   timeoutSeconds: 1
   failureThreshold: 3
