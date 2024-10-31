@@ -59,16 +59,9 @@ jobs:
       - name: Display Transformed Environment Variables (Optional)
         run: cat env-vars.txt
 
-      - name: Log Current Working Directory and List Files
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Contents of the directory:"
-          ls -R
-
       - name: Deploy with Helm
         run: |
-          helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
+          helm upgrade --install customer-api-release ../tools/helm/customer-api-chart \
             --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
             --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
             $(cat env-vars.txt | sed 's/^/--set env./g')
