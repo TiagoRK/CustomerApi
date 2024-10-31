@@ -61,35 +61,9 @@ jobs:
       - name: Display Transformed Environment Variables (Optional)
         run: cat env-vars.txt
 
-      - name: Show initial working directory
-        run: |
-          echo "Initial working directory:"
-          pwd
-          echo "Contents:"
-          ls -R
-      
-      - name: Navigate to repository root and list files
-        run: |
-          cd ..
-          echo "Moved to repository root (CustomerApi):"
-          pwd
-          echo "Contents of repository root:"
-          ls -R
-      
-      - name: List files in tools and helm directories
-        run: |
-          cd tools
-          echo "Inside tools directory:"
-          pwd
-          ls -R
-          cd helm
-          echo "Inside helm directory:"
-          pwd
-          ls -R
-
       - name: Deploy with Helm
         run: |
-          helm upgrade --install customer-api-release ../tools/helm/customer-api-chart \
+          helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
             --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
             --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
             $(cat env-vars.txt | sed 's/^/--set env./g')
