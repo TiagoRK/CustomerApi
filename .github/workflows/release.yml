@@ -62,7 +62,11 @@ jobs:
 
       - name: Deploy with Helm
         run: |
+          export $(cat env-vars.txt | xargs) # Export each key-value pair from env-vars.txt
+          envsubst < <(cat <<EOF
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
-            --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
-            --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
-            $(cat env-vars.txt | sed 's/^/--set env./g')
+            --set image.repository=${AZURE_REGISTRY_NAME}.azurecr.io/${AZURE_IMAGE_NAME} \
+            --set image.tag=${AZURE_IMAGE_TAG} \
+            $(awk '{print "--set env."$0}' env-vars.txt)
+          EOF
+          ) | bash
