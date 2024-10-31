@@ -23,6 +23,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddServiceConfigs(appLogger, builder);
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -37,7 +39,7 @@ app.UseAuthorization();
 
 app.UseExceptionHandler();
 
-app.UseHealthChecks("/health-check");
+app.MapHealthChecks("/health-check");
 
 app.MapControllers();
 
