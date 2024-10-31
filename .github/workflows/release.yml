@@ -59,6 +59,13 @@ jobs:
       - name: Display Transformed Environment Variables (Optional)
         run: cat env-vars.txt
 
+      - name: Log Current Working Directory and List Files
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Contents of the directory:"
+          ls -R
+
       - name: Deploy with Helm
         run: |
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
