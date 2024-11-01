@@ -68,8 +68,8 @@ jobs:
       - name: Template values.yaml with environment variables
         uses: vafinvr/template-env-action@v2.0.1
         with:
-          file: ./tools/helm/customer-api-chart/values.yaml  # Path to your values.yaml file
-          output: ./tools/helm/customer-api-chart/values-templated.yaml  # Output file for templated values.yaml
+          entryPoint: ./tools/helm/customer-api-chart/values.yaml  # Path to your values.yaml file
+          filename: ./tools/helm/customer-api-chart/values-templated.yaml  # Output file for templated values.yaml
 
       - name: Show templated values.yaml
         run: cat ./tools/helm/customer-api-chart/values-templated.yaml  # Check the output file
