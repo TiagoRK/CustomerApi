@@ -80,8 +80,10 @@ jobs:
 
           # Loop through all environment variables and replace tokens
           for var in $(compgen -e); do
-            # Safely replace ${VAR_NAME} with the value of $VAR_NAME in the specified file
-            sed -i "s|\${${var}}|${!var}|g" "$FILE_PATH"
+            # Escape special characters in the environment variable value for safe use in sed
+            safe_value=$(printf '%s\n' "${!var}" | sed 's/[&/\]/\\&/g')
+            # Replace ${VAR_NAME} with the escaped value in the specified file
+            sed -i "s|\${${var}}|$safe_value|g" "$FILE_PATH"
           done
           
       - name: Show updated values.yaml
