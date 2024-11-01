@@ -46,8 +46,9 @@ jobs:
       
           # Read environment variables
           while IFS= read -r secret; do
+            echo "Debug: secret='$secret'"
             if [[ $secret == ENV_* ]]; then
-              echo "Debug: secret='$secret'"
+              
               found=true
               key=$(echo "$secret" | cut -d= -f1 | sed 's/^ENV_//')
               value=$(echo "$secret" | cut -d= -f2-)
