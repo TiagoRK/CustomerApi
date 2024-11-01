@@ -61,8 +61,8 @@ jobs:
             if [[ "$key" =~ ^ENV_ ]]; then
               new_key="${key#ENV_}"
               echo "$new_key=$value" >> $GITHUB_ENV
-              # Append to values.yaml in the correct format
-              echo "  ${new_key}: \"\${${new_key}}\"" >> ./tools/helm/customer-api-chart/values.yaml
+              # Append to values.yaml in the <<VAR_NAME>> format
+              echo "  ${new_key}: \"<<${new_key}>>\"" >> ./tools/helm/customer-api-chart/values.yaml
             else
               echo "Invalid variable name: $key"
             fi
@@ -75,11 +75,17 @@ jobs:
         run: |
           FILE_PATH="./tools/helm/customer-api-chart/values.yaml"
           
-          # Export environment variables for envsubst to use
-          export $(compgen -e | grep -E '^ENV_' | xargs)
+          # Loop through all environment variables and replace tokens with <<VAR_NAME>> format
+          for var in $(compgen -e); do
+            value="${!var}"
+            token="<<${var}>>"
+            
+            # Use awk to replace tokens in the file
+            awk -v token="$token" -v value="$value" '{gsub(token, value); print}' "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
+          done
           
-          # Use envsubst to replace tokens and overwrite the original file
-          envsubst < "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
+      - name: Show updated values.yaml
+        run: cat ./tools/helm/customer-api-chart/values.yaml
           
       - name: Deploy with Helm
         run: |
