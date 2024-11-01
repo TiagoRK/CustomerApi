@@ -51,6 +51,8 @@ jobs:
       - name: Set environment variables
         run: |
           # Extract all ENV_ variables and set them as environment variables
+          echo "AQUI"
+          echo "${{ steps.import_env.outputs.env_vars }}"
           ENV_VARS=$(echo "${{ steps.import_env.outputs.env_vars }}" | tr '\n' ' ')
           echo "Extracted ENV Vars: $ENV_VARS"
           echo "$ENV_VARS" | while read -r var; do
@@ -67,7 +69,7 @@ jobs:
         with:
           file: ./tools/helm/customer-api-chart/values.yaml  # Path to your values.yaml file
           output: ./tools/helm/customer-api-chart/values-templated.yaml  # Output file for templated values.yaml
-          env: ${{ toJson(secrets) }}  # Pass all secrets to the action
+          env: ${{ steps.import_env.outputs.env_vars }}  # Pass all secrets to the action
 
       - name: Show templated values.yaml
         run: cat ./tools/helm/customer-api-chart/values-templated.yaml  # Check the output file
