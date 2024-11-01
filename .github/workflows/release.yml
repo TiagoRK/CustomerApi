@@ -74,17 +74,15 @@ jobs:
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
 
-      - name: Show environment variable before token replacement
-        run: |
-          echo "CONNECTIONSTRINGS__DATABASE: $CONNECTIONSTRINGS__DATABASE"
-
       - name: Replace tokens in values.yaml
-        uses: cschleiden/replace-tokens@v1
-        with:
-          file: ./tools/helm/customer-api-chart/values.yaml
-          tokenPrefix: '${'
-          tokenSuffix: '}'
-        env: ${{ env }}
+        run: |
+          FILE_PATH="./tools/helm/customer-api-chart/values.yaml"
+
+          # Loop through all environment variables and replace tokens
+          for var in $(compgen -e); do
+            # Replace ${VAR_NAME} with the value of $VAR_NAME in the specified file
+            sed -i "s|\${${var}}|${!var}|g" "$FILE_PATH"
+          done
           
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
