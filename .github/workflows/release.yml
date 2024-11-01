@@ -65,10 +65,15 @@ jobs:
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
 
-      - name: Template values.yaml with environment variables
-        uses: vafinvr/template-env-action@v2.0.1
+      - name: Show updated env variables
+        run: cat env.CONNECTIONSTRINGS__DATABASE
+
+      - name: Replace tokens in values.yaml
+        uses: cschleiden/replace-tokens@v1
         with:
-          filename: ./tools/helm/customer-api-chart/values.yaml
+          file: ./tools/helm/customer-api-chart/values.yaml
+          tokenPrefix: '${'
+          tokenSuffix: '}'
           
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
