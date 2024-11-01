@@ -77,13 +77,14 @@ jobs:
       - name: Replace tokens in values.yaml
         run: |
           FILE_PATH="./tools/helm/customer-api-chart/values.yaml"
-
+          
           # Loop through all environment variables and replace tokens
           for var in $(compgen -e); do
-            # Escape special characters in the environment variable value for safe use in sed
-            safe_value=$(printf '%s\n' "${!var}" | sed 's/[&/\]/\\&/g')
-            # Replace ${VAR_NAME} with the escaped value in the specified file
-            sed -i "s|\${${var}}|$safe_value|g" "$FILE_PATH"
+            value="${!var}"
+            token="\${${var}}"
+            
+            # Use awk to replace tokens in the file
+            awk -v token="$token" -v value="$value" '{gsub(token, value); print}' "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
           done
           
       - name: Show updated values.yaml
