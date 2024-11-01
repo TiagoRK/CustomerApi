@@ -70,8 +70,8 @@ jobs:
         with:
           filename: ./tools/helm/customer-api-chart/values.yaml
           
-      - name: Show templated values.yaml
-        run: cat ./tools/helm/customer-api-chart/values-templated.yaml  # Check the output file
+      - name: Show updated values.yaml
+        run: cat ./tools/helm/customer-api-chart/values.yaml
 
       - name: Deploy with Helm
         run: |
