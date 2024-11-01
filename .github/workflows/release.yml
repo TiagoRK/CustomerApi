@@ -46,7 +46,11 @@ jobs:
         id: import_env
         uses: Pablommr/import-secrets@v1.0.0
         with:
-          prefix: env_
+          prefix: ENV_
+
+      - name: Debug Imported Env Vars
+        run: |
+          echo "Imported Env Vars: ${{ steps.import_env.outputs.env_vars }}"
 
       - name: Deploy with Helm
         run: |
