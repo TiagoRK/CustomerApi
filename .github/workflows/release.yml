@@ -59,10 +59,9 @@ jobs:
           # Loop through each variable and export it
           echo "$ENV_VARS" | while IFS='=' read -r key value; do
             if [[ "$key" =~ ^ENV_ ]]; then
-              new_key="${key#ENV_}"
-              echo "$new_key=$value" >> $GITHUB_ENV
-              # Append to values.yaml in the <<VAR_NAME>> format
-              echo "  ${new_key}: \"<<${new_key}>>\"" >> ./tools/helm/customer-api-chart/values.yaml
+              new_key="${key#ENV_}"  # Remove the ENV_ prefix for the variable name
+              # Append to values.yaml in the format: "${ENV_VAR_NAME}"
+              echo "  ${new_key}: \"\${$key}\"" >> ./tools/helm/customer-api-chart/values.yaml
             else
               echo "Invalid variable name: $key"
             fi
@@ -70,6 +69,11 @@ jobs:
 
           # Close the env block
           echo "}" >> ./tools/helm/customer-api-chart/values.yaml
+
+      - name: Secrets to Env
+      - uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
 
       - name: Replace tokens in values.yaml
         run: |
