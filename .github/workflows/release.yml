@@ -3,10 +3,7 @@ name: Customer API | Release
 on:
   workflow_dispatch:
 
-env:
-  AZURE_REGISTRY_NAME: tiagokcontainerregistry
-  AZURE_IMAGE_NAME: customer-api
-  AZURE_IMAGE_TAG: latest
+env: ${{ secrets }}
 
 permissions:
   id-token: write
