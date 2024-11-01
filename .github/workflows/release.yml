@@ -42,14 +42,39 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
-      - name: Extract ENV_ variables
+      - name: Import env_ prefixed variables
+        id: import_env
+        uses: Pablommr/import-secrets@v1.0.0
+        with:
+          prefix: ENV_
+
+      - name: Set environment variables
         run: |
-          ENV_VARS=$(echo "$ALL_SECRETS" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "--set env.\(.key)=\(.value)"')
-          echo "Extracted ENV_VARS: $ENV_VARS"
+          # Extract all ENV_ variables and set them as environment variables
+          ENV_VARS=$(echo "${{ steps.import_env.outputs.env_vars }}" | tr '\n' ' ')
+          echo "Extracted ENV Vars: $ENV_VARS"
+          echo "$ENV_VARS" | while read -r var; do
+            export "$var"
+            # Append to values.yaml
+            echo "  \"${var#ENV_}\": \"\${${var#ENV_}}\"" >> ./tools/helm/customer-api-chart/values.yaml
+          done
+
+      - name: Show updated values.yaml
+        run: cat ./tools/helm/customer-api-chart/values.yaml
+
+      - name: Template values.yaml with environment variables
+        uses: vafinvr/template-env-action@v2.0.1
+        with:
+          file: ./tools/helm/customer-api-chart/values.yaml  # Path to your values.yaml file
+          output: ./tools/helm/customer-api-chart/values-templated.yaml  # Output file for templated values.yaml
+          env: ${{ toJson(secrets) }}  # Pass all secrets to the action
+
+      - name: Show templated values.yaml
+        run: cat ./tools/helm/customer-api-chart/values-templated.yaml  # Check the output file
 
       - name: Deploy with Helm
         run: |
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
             --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
             --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
-            $ENV_VARS
+            -f ./tools/helm/customer-api-chart/values-templated.yaml  # Use the templated values.yaml
