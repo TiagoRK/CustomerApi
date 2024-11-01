@@ -80,7 +80,7 @@ jobs:
 
           # Loop through all environment variables and replace tokens
           for var in $(compgen -e); do
-            # Replace ${VAR_NAME} with the value of $VAR_NAME in the specified file
+            # Safely replace ${VAR_NAME} with the value of $VAR_NAME in the specified file
             sed -i "s|\${${var}}|${!var}|g" "$FILE_PATH"
           done
           
