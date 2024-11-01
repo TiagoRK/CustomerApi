@@ -42,12 +42,13 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
+      - name: Extract ENV_ variables
+        run: |
+          ENV_VARS=$(echo "$ALL_SECRETS" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "--set env.\(.key)=\(.value)"')
+          echo "Extracted ENV_VARS: $ENV_VARS"
+
       - name: Deploy with Helm
         run: |
-          ENV_VARS=$(echo "${{ secrets.ALL_SECRETS }}" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "--set env.\(.key)=\(.value)"')
-
-          echo "Exported ENV_VARS: $ENV_VARS"
-
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
             --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
             --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
