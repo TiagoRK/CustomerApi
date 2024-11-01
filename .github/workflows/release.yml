@@ -79,10 +79,10 @@ jobs:
         run: |
           FILE_PATH="./tools/helm/customer-api-chart/values.yaml"
           
-          # Loop through all environment variables and replace tokens with <<VAR_NAME>> format
+          # Loop through all environment variables and replace tokens with their actual values
           for var in $(compgen -e); do
             value="${!var}"
-            token="<<${var}>>"
+            token="\${$var}"
             
             # Use awk to replace tokens in the file
             awk -v token="$token" -v value="$value" '{gsub(token, value); print}' "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
