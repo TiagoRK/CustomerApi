@@ -65,8 +65,14 @@ jobs:
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
 
-      - name: Show updated env variables
-        run: cat env.CONNECTIONSTRINGS__DATABASE
+      - name: Show all environment variables
+        run: printenv
+
+
+      - name: Show specific environment variables
+        run: |
+          env | grep 'CONNECTIONSTRINGS__'
+
 
       - name: Replace tokens in values.yaml
         uses: cschleiden/replace-tokens@v1
