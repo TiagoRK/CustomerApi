@@ -42,26 +42,11 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
-      - name: List available environment variables before import
-        run: env
-        
-      - name: Import env_ prefixed variables
-        id: import_env
-        uses: Pablommr/import-secrets@v1.0.0
-        with:
-          prefix: ENV_
-
-      - name: Debug Imported Env Vars
-        run: |
-          echo "Imported Env Vars: ${{ steps.import_env.outputs }}"
-
-      - name: Debug Imported Env Vars
-        run: |
-          echo "Imported Env Vars: ${{ steps.import_env.outputs.env_vars }}"
-
       - name: Deploy with Helm
         run: |
+          ENV_VARS=$(echo "${{ secrets.ALL_SECRETS }}" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "--set env.\(.key)=\(.value)"')
+
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
             --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
             --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
-            $(echo "${{ steps.import_env.outputs.env_vars }}" | sed 's/^/--set env./g')
+            $ENV_VARS
