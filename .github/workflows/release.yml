@@ -68,8 +68,7 @@ jobs:
       - name: Template values.yaml with environment variables
         uses: vafinvr/template-env-action@v2.0.1
         with:
-          entryPoint: "/bin/sh"  # Use a shell to execute the command
-          args: "-c './tools/helm/customer-api-chart/values.yaml --output ./tools/helm/customer-api-chart/values-templated.yaml'"  # Command to run
+          filename: ./tools/helm/customer-api-chart/values.yaml
           
       - name: Show templated values.yaml
         run: cat ./tools/helm/customer-api-chart/values-templated.yaml  # Check the output file
@@ -78,5 +77,4 @@ jobs:
         run: |
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
             --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
-            --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
-            -f ./tools/helm/customer-api-chart/values-templated.yaml  # Use the templated values.yaml
+            --set image.tag=${{ env.AZURE_IMAGE_TAG }}
