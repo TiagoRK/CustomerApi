@@ -84,6 +84,7 @@ jobs:
           file: ./tools/helm/customer-api-chart/values.yaml
           tokenPrefix: '${'
           tokenSuffix: '}'
+        env: ${{ env }}
           
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
