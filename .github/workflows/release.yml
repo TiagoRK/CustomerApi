@@ -40,11 +40,11 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
-      - name: Filter environment variables with prefix `env_`
+      - name: Filter environment variables with prefix `ENV_`
         id: filtered-env
         uses: wreality/filtered-env@v1.0.4
         with:
-          prefix: env_
+          prefix: ENV_
           token: ${{ secrets.GITHUB_TOKEN }}
           tags: "latest"
 
