@@ -48,8 +48,13 @@ jobs:
           ENV_VARS=$(echo "$ALL_SECRETS" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "\(.key)=\(.value)"')
           echo "Extracted ENV Vars: $ENV_VARS"
 
-          # Initialize the values.yaml file with the correct structure
-          echo "env: {" > ./tools/helm/customer-api-chart/values.yaml
+          # Check if values.yaml already has an env section and remove it if it does
+          if grep -q '^env:' ./tools/helm/customer-api-chart/values.yaml; then
+            sed -i '/^env:/,/^}/d' ./tools/helm/customer-api-chart/values.yaml
+          fi
+
+          # Append the env block to the end of the values.yaml file
+          echo "env: {" >> ./tools/helm/customer-api-chart/values.yaml
 
           # Loop through each variable and export it
           echo "$ENV_VARS" | while IFS='=' read -r key value; do
