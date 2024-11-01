@@ -71,7 +71,7 @@ jobs:
           echo "}" >> ./tools/helm/customer-api-chart/values.yaml
 
       - name: Secrets to Env
-      - uses: oNaiPs/secrets-to-env-action@v1
+        uses: oNaiPs/secrets-to-env-action@v1
         with:
           secrets: ${{ toJSON(secrets) }}
 
