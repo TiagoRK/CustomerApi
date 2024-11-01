@@ -46,7 +46,7 @@ jobs:
         with:
           prefix: env_
           token: ${{ secrets.GITHUB_TOKEN }}
-          tags: ""
+          tags: "env_vars"
 
       - name: Deploy with Helm
         run: |
