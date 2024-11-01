@@ -42,23 +42,22 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
-      - name: Import env_ prefixed variables
-        id: import_env
-        uses: Pablommr/import-secrets@v1.0.0
-        with:
-          prefix: ENV_
-
       - name: Set environment variables
         run: |
-          # Extract all ENV_ variables and set them as environment variables
-          echo "AQUI"
-          echo "${{ steps.import_env.outputs.env_vars }}"
-          ENV_VARS=$(echo "${{ steps.import_env.outputs.env_vars }}" | tr '\n' ' ')
+          # Extract ENV_ prefixed variables from ALL_SECRETS
+          ENV_VARS=$(echo "$ALL_SECRETS" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "--set env.\(.key)=\(.value)"')
           echo "Extracted ENV Vars: $ENV_VARS"
+          
+          # Loop through each variable and export it
           echo "$ENV_VARS" | while read -r var; do
-            export "$var"
+            # Extract key without the ENV_ prefix
+            key="${var#--set env.}"
+
+            # Set the variable in the GitHub Actions environment
+            echo "$key=${!key}" >> $GITHUB_ENV
+
             # Append to values.yaml
-            echo "  \"${var#ENV_}\": \"\${${var#ENV_}}\"" >> ./tools/helm/customer-api-chart/values.yaml
+            echo "  \"${key}\": \"\${${key}}\"" >> ./tools/helm/customer-api-chart/values.yaml
           done
 
       - name: Show updated values.yaml
@@ -69,7 +68,6 @@ jobs:
         with:
           file: ./tools/helm/customer-api-chart/values.yaml  # Path to your values.yaml file
           output: ./tools/helm/customer-api-chart/values-templated.yaml  # Output file for templated values.yaml
-          env: ${{ steps.import_env.outputs.env_vars }}  # Pass all secrets to the action
 
       - name: Show templated values.yaml
         run: cat ./tools/helm/customer-api-chart/values-templated.yaml  # Check the output file
