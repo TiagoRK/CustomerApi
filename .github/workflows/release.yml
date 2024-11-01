@@ -47,23 +47,24 @@ jobs:
           # Extract ENV_ prefixed variables from ALL_SECRETS
           ENV_VARS=$(echo "$ALL_SECRETS" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "\(.key)=\(.value)"')
           echo "Extracted ENV Vars: $ENV_VARS"
-      
+
+          # Initialize the values.yaml file with the correct structure
+          echo "env: {" > ./tools/helm/customer-api-chart/values.yaml
+
           # Loop through each variable and export it
           echo "$ENV_VARS" | while IFS='=' read -r key value; do
-            # Check if the key is a valid variable name (starts with a letter and contains only letters, digits, and underscores)
             if [[ "$key" =~ ^ENV_ ]]; then
-              # Remove the ENV_ prefix
               new_key="${key#ENV_}"
-      
-              # Set the variable in the GitHub Actions environment
               echo "$new_key=$value" >> $GITHUB_ENV
-      
-              # Append to values.yaml
-              echo "  \"$new_key\": \"\${$new_key}\"" >> ./tools/helm/customer-api-chart/values.yaml
+              # Append to values.yaml in the correct format
+              echo "  ${new_key}: \"\${${new_key}}\"" >> ./tools/helm/customer-api-chart/values.yaml
             else
               echo "Invalid variable name: $key"
             fi
           done
+
+          # Close the env block
+          echo "}" >> ./tools/helm/customer-api-chart/values.yaml
 
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
