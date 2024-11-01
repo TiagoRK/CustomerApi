@@ -3,7 +3,10 @@ name: Customer API | Release
 on:
   workflow_dispatch:
 
-env: ${{ secrets }}
+env:
+  AZURE_REGISTRY_NAME: tiagokcontainerregistry
+  AZURE_IMAGE_NAME: customer-api
+  AZURE_IMAGE_TAG: latest
 
 permissions:
   id-token: write
@@ -37,43 +40,17 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
-      - name: Extract Secrets with env_ Prefix
-        id: extract-secrets
-        run: |
-          echo "Extracting env-prefixed secrets..."
-          found=false
-          > env-vars.txt  # Clear or create the file
-      
-          # Read environment variables
-          while IFS= read -r secret; do
-            echo "Debug: secret='$secret'"
-            if [[ $secret == ENV_* ]]; then
-              
-              found=true
-              key=$(echo "$secret" | cut -d= -f1 | sed 's/^ENV_//')
-              value=$(echo "$secret" | cut -d= -f2-)
-              
-              # Debug: Show what is being extracted
-              echo "Debug: key='$key', value='$value'"
-      
-              # Escape any double quotes in the value and wrap it in quotes
-              value=$(echo "$value" | sed 's/"/\\"/g')
-              echo "$key=\"$value\"" >> env-vars.txt  
-              echo "Extracted: $key=\"$value\""
-            fi
-          done < <(printenv)
-      
-          if [ "$found" = false ]; then
-            echo "No env-prefixed secrets found."
-            exit 1
-          fi
-          
-      - name: Display Transformed Environment Variables (Optional)
-        run: cat env-vars.txt
+      - name: Filter environment variables with prefix `env_`
+        id: filtered-env
+        uses: wreality/filtered-env@v1.0.4
+        with:
+          prefix: env_
 
       - name: Deploy with Helm
         run: |
+          HELM_ENV_VARS=$(echo "${{ steps.filtered-env.outputs.filteredEnv }}" | jq -r 'to_entries|map("--set env.\(.key)=\(.value|tostring)")|.[]')
+          
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
-            --set image.repository="***.azurecr.io/" \
-            --set image.tag="" \
-            $(awk '{print "--set env."$0}' env-vars.txt)
+            --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
+            --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
+            $HELM_ENV_VARS
