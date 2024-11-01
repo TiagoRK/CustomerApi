@@ -71,9 +71,6 @@ jobs:
           # Close the env block
           echo "}" >> ./tools/helm/customer-api-chart/values.yaml
 
-      - name: Show updated values.yaml
-        run: cat ./tools/helm/customer-api-chart/values.yaml
-
       - name: Replace tokens in values.yaml
         run: |
           FILE_PATH="./tools/helm/customer-api-chart/values.yaml"
@@ -84,9 +81,6 @@ jobs:
           # Use envsubst to replace tokens and overwrite the original file
           envsubst < "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
           
-      - name: Show updated values.yaml
-        run: cat ./tools/helm/customer-api-chart/values.yaml
-
       - name: Deploy with Helm
         run: |
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
