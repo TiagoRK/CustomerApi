@@ -45,6 +45,7 @@ jobs:
         uses: wreality/filtered-env@v1.0.4
         with:
           prefix: env_
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy with Helm
         run: |
