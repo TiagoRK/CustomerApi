@@ -3,7 +3,10 @@ name: Customer API | Release
 on:
   workflow_dispatch:
 
-env: ${{ secrets }}
+env:
+  AZURE_REGISTRY_NAME: tiagokcontainerregistry
+  AZURE_IMAGE_NAME: customer-api
+  AZURE_IMAGE_TAG: latest
 
 permissions:
   id-token: write
@@ -37,19 +40,15 @@ jobs:
           resource-group: ${{ secrets.AZURE_AKS_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
 
-      - name: Filter environment variables with prefix `ENV_`
-        id: filtered-env
-        uses: wreality/filtered-env@v1.0.4
+      - name: Import env_ prefixed variables
+        id: import_env
+        uses: Pablommr/import-secrets@v1.0.0
         with:
-          prefix: ENV_
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tags: "latest"
+          prefix: env_
 
       - name: Deploy with Helm
         run: |
-          HELM_ENV_VARS=$(echo "${{ steps.filtered-env.outputs.filteredEnv }}" | jq -r 'to_entries|map("--set env.\(.key)=\(.value|tostring)")|.[]')
-          
           helm upgrade --install customer-api-release ./tools/helm/customer-api-chart \
             --set image.repository=${{ env.AZURE_REGISTRY_NAME }}.azurecr.io/${{ env.AZURE_IMAGE_NAME }} \
             --set image.tag=${{ env.AZURE_IMAGE_TAG }} \
-            $HELM_ENV_VARS
+            $(echo "${{ steps.import_env.outputs.env_vars }}" | sed 's/^/--set env./g')
