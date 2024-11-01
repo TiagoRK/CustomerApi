@@ -78,14 +78,11 @@ jobs:
         run: |
           FILE_PATH="./tools/helm/customer-api-chart/values.yaml"
           
-          # Loop through all environment variables and replace tokens
-          for var in $(compgen -e); do
-            value="${!var}"
-            token="\${${var}}"
-            
-            # Use awk to replace tokens in the file
-            awk -v token="$token" -v value="$value" '{gsub(token, value); print}' "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
-          done
+          # Export environment variables for envsubst to use
+          export $(compgen -e | grep -E '^ENV_' | xargs)
+          
+          # Use envsubst to replace tokens and overwrite the original file
+          envsubst < "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
           
       - name: Show updated values.yaml
         run: cat ./tools/helm/customer-api-chart/values.yaml
