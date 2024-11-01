@@ -18,6 +18,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      ALL_SECRETS: ${{ toJson(secrets) }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
