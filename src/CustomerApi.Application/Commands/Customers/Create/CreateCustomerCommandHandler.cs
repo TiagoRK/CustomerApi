@@ -1,4 +1,5 @@
-﻿using CustomerApi.Domain.Customers;
+﻿using CustomerApi.Domain.Constants;
+using CustomerApi.Domain.Customers;
 using CustomerApi.SharedKernel;
 using MediatR;
 
@@ -35,14 +36,16 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
     return Result<object, Error>.SuccessWithNull();
   }
 
-  private void AddBusinessRules()
+  public override void AddBusinessRules()
   {
-    AddSyncBusinessRule(command =>
-        command.BirthDate <= DateTime.Today.AddYears(-18),
-        CustomerErrors.BirthDateIsNotValid());
+    AddSyncBusinessRule(
+      command => command.BirthDate <= DateTime.Today.AddYears(-BusinessRulesConstants.MINIMUM_AGE),
+      CustomerErrors.BirthDateIsNotValid()
+    );
 
-    AddAsyncBusinessRule(async command =>
-        await _customerRepository.IsEmailUnique(command.Email),
-        CustomerErrors.EmailIsNotUnique());
+    AddAsyncBusinessRule(
+      async command => await _customerRepository.IsEmailUnique(command.Email),
+      CustomerErrors.EmailIsNotUnique()
+    );
   }
 }

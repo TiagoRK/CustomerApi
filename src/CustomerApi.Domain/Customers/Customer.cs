@@ -7,4 +7,19 @@ public sealed class Customer(string name, DateTime birthDate, string email) : En
   public string Name { get; set; } = name;
   public DateTime BirthDate { get; set; } = DateTime.SpecifyKind(birthDate, DateTimeKind.Utc);
   public string Email { get; set; } = email;
+
+  public void UpdateName(string newName)
+  {
+    Name = newName;
+  }
+
+  public void UpdateBirthdate(DateTime newBirthDate)
+  {
+    BirthDate = newBirthDate;
+  }
+
+  public void UpdateEmail(string newEmail)
+  {
+    Email = newEmail;
+  }
 }

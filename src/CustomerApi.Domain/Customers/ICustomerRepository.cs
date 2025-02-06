@@ -10,4 +10,6 @@ public interface ICustomerRepository
   Task<bool> IsEmailUnique(string email);
   Task<PagedResponse<Customer>> GetPaginated(int pageSize, int pageNumber);
   Task Delete(Customer customer);
+  Task Update(Customer customer);
+
 }

@@ -11,13 +11,18 @@ public class DeleteCustomerByEmailCommandHandler(ICustomerRepository customerRep
   {
     var customerToDelete = await _customerRepository.GetByEmail(request.Email);
 
-    if (customerToDelete == null)
-    {
-      return CustomerErrors.CustomerWithEmailNotFound(request.Email);
-    }
+    await _customerRepository.Delete(customerToDelete!);
 
-    await _customerRepository.Delete(customerToDelete);
+    //Ver se tem como realizar a validação e usar o dado que já pegou no banco
 
     throw new NotImplementedException();
+  }
+
+  public override void AddBusinessRules()
+  {
+    AddAsyncBusinessRule(
+      async command => await _customerRepository.GetByEmail(command.Email) is not null,
+      command => CustomerErrors.CustomerWithEmailNotFound(command.Email)
+    );
   }
 }

@@ -65,4 +65,10 @@ public class CustomerRepository(CustomerDbContext dbContext) : ICustomerReposito
     _dbContext.Customers.Remove(customer);
     await _dbContext.SaveChangesAsync();
   }
+
+  public async Task Update(Customer customer)
+  {
+    _dbContext.Customers.Update(customer);
+    await _dbContext.SaveChangesAsync();
+  }
 }
