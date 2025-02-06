@@ -15,9 +15,4 @@
     <ProjectReference Include="..\CustomerApi.Domain\CustomerApi.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\Customers\Delete\" />
-    <Folder Include="Commands\Customers\Update\" />
-  </ItemGroup>
-
 </Project>
