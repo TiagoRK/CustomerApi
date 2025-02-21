@@ -22,7 +22,6 @@ public class CreateCustomerCommand : CommandValidator, IRequest<Result<object, E
 
     validator.RuleFor(x => x.BirthDate)
         .NotEmpty()
-        .NotNull()
         .LessThanOrEqualTo(DateTime.Today)
         .GreaterThan(DateTime.MinValue);
 

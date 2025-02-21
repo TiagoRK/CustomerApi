@@ -14,18 +14,22 @@ public abstract class TestBase
   protected Mock<ICustomerRepository> _customerRepositoryMock;
   protected IServiceProvider _serviceProvider;
   private ServiceCollection _services;
-  private readonly List<Mock> _mocks = new();
+  private readonly List<Mock> _mocks = [];
 
-  [SetUp]
-  public void Setup()
+  [OneTimeSetUp]
+  public void OneTimeSetUp()
   {
     _faker = new Faker("pt_BR");
-
-    ResetMocks();
 
     _services = new ServiceCollection();
     AddRepositoriesToContainer();
     AddMediator();
+  }
+
+  [SetUp]
+  public void Setup()
+  {
+    ResetMocks();
   }
 
   private void ResetMocks()

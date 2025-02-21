@@ -4,7 +4,7 @@ using CustomerApi.SharedKernel;
 using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Update;
-public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerCommand>, IRequestHandler<UpdateCustomerCommand, Result<object, Error>>
+public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerCommand>, IRequestHandler<UpdateCustomerCommand, Result<Customer, Error>>
 {
   private readonly ICustomerRepository _customerRepository;
 
@@ -15,14 +15,20 @@ public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerComm
     AddBusinessRules();
   }
 
-  public async Task<Result<object, Error>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
+  public async Task<Result<Customer, Error>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
   {
-    var customer = await _customerRepository.GetByEmail(request.Email);
-
-    if (customer == null)
+    if (!request.IsValid())
     {
-      return CustomerErrors.CustomerWithEmailNotFound(request.Email);
+      return request.ValidationErrors;
     }
+
+    var businessErrors = await Validate(request);
+    if (businessErrors.Count != 0)
+    {
+      return businessErrors;
+    }
+
+    var customer = await _customerRepository.GetByEmail(request.CurrentEmail);
 
     customer.UpdateName(request.Name);
     customer.UpdateBirthdate(request.BirthDate);
@@ -41,8 +47,8 @@ public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerComm
     );
 
     AddAsyncBusinessRule(
-      async command => await _customerRepository.GetByEmail(command.Email) is not null,
-      command => CustomerErrors.CustomerWithEmailNotFound(command.Email)
+      async command => await _customerRepository.GetByEmail(command.CurrentEmail) is not null,
+      command => CustomerErrors.CustomerWithEmailNotFound(command.CurrentEmail)
     );
 
     AddAsyncBusinessRule(

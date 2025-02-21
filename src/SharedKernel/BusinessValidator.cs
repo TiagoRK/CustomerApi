@@ -27,7 +27,7 @@ public abstract class BusinessValidator<T> : IBusinessValidator
     _syncBusinessRules.Add((validationFunc, _ => validationError));
   }
 
-  protected async Task<List<Error>> Validate(T command, CancellationToken cancellationToken)
+  protected async Task<List<Error>> Validate(T command)
   {
     var errors = new List<Error>();
 
@@ -40,6 +40,9 @@ public abstract class BusinessValidator<T> : IBusinessValidator
         return errors;
       }
     }
+
+    using var validationCts = new CancellationTokenSource();
+    var cancellationToken = validationCts.Token;
 
     var tasks = _asyncBusinessRules
         .Select(rule => Task.Run(async () =>

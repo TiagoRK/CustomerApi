@@ -1,10 +1,14 @@
-﻿using CustomerApi.SharedKernel;
+﻿using System.Text.Json.Serialization;
+using CustomerApi.Domain.Customers;
+using CustomerApi.SharedKernel;
 using FluentValidation;
 using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Update;
-public class UpdateCustomerCommand : CommandValidator, IRequest<Result<object, Error>>
+public class UpdateCustomerCommand : CommandValidator, IRequest<Result<Customer, Error>>
 {
+  [JsonIgnore]
+  public string CurrentEmail { get; set; }
   public string Name { get; set; }
   public DateTime BirthDate { get; set; }
   public string Email { get; set; }
@@ -13,6 +17,11 @@ public class UpdateCustomerCommand : CommandValidator, IRequest<Result<object, E
   {
     var validator = new InlineValidator<UpdateCustomerCommand>();
 
+    validator.RuleFor(x => x.CurrentEmail)
+        .NotEmpty()
+        .NotNull()
+        .EmailAddress();
+
     validator.RuleFor(x => x.Name)
         .NotEmpty()
         .NotNull()
@@ -20,7 +29,6 @@ public class UpdateCustomerCommand : CommandValidator, IRequest<Result<object, E
 
     validator.RuleFor(x => x.BirthDate)
         .NotEmpty()
-        .NotNull()
         .LessThanOrEqualTo(DateTime.Today)
         .GreaterThan(DateTime.MinValue);
 
