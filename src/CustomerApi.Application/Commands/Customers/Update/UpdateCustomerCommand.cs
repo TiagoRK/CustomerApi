@@ -23,18 +23,13 @@ public class UpdateCustomerCommand : CommandValidator, IRequest<Result<Customer,
         .EmailAddress();
 
     validator.RuleFor(x => x.Name)
-        .NotEmpty()
-        .NotNull()
         .MaximumLength(255);
 
     validator.RuleFor(x => x.BirthDate)
-        .NotEmpty()
         .LessThanOrEqualTo(DateTime.Today)
         .GreaterThan(DateTime.MinValue);
 
     validator.RuleFor(x => x.Email)
-        .NotEmpty()
-        .NotNull()
         .EmailAddress();
 
     ValidationResult = validator.Validate(this);

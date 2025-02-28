@@ -30,9 +30,9 @@ public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerComm
 
     var customer = await _customerRepository.GetByEmail(request.CurrentEmail);
 
-    customer.UpdateName(request.Name);
-    customer.UpdateBirthdate(request.BirthDate);
-    customer.UpdateEmail(request.Email);
+    if (!string.IsNullOrEmpty(request.Name)) customer.UpdateName(request.Name);
+    if (request.BirthDate != default) customer.UpdateBirthdate(request.BirthDate);
+    if (!string.IsNullOrEmpty(request.Email)) customer.UpdateEmail(request.Email);
 
     await _customerRepository.Update(customer);
 

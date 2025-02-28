@@ -6,7 +6,7 @@ public abstract class CustomerTestBase : TestBase
   public Customer _fakeCustomer { get; set; }
 
   [SetUp]
-  public void Setup()
+  public new void Setup()
   {
     _fakeCustomer = new Customer(
         _faker.Name.FullName(),
@@ -14,5 +14,4 @@ public abstract class CustomerTestBase : TestBase
         _faker.Internet.Email()
       );
   }
-
 }

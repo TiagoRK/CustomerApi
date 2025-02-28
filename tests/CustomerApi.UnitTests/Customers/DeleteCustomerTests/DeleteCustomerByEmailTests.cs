@@ -1,7 +1,7 @@
 ﻿using CustomerApi.Application.Commands.Customers.Delete;
 using Moq;
 
-namespace CustomerApi.UnitTests.Customers;
+namespace CustomerApi.UnitTests.Customers.DeleteCustomerTests;
 public class DeleteCustomerByEmailTests : CustomerTestBase
 {
   [Test]

@@ -1,7 +1,7 @@
 ﻿using CustomerApi.Application.Commands.Customers.Create;
 using Moq;
 
-namespace CustomerApi.UnitTests.Customers;
+namespace CustomerApi.UnitTests.Customers.CreateCustomerTests;
 public class CreateCustomerTests : CustomerTestBase
 {
   [Test]

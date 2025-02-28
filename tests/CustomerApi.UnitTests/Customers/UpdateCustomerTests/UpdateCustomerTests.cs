@@ -1,7 +1,7 @@
 ﻿using CustomerApi.Application.Commands.Customers.Update;
 using Moq;
 
-namespace CustomerApi.UnitTests.Customers;
+namespace CustomerApi.UnitTests.Customers.UpdateCustomerTests;
 public class UpdateCustomerTests : CustomerTestBase
 {
   [Test]
@@ -10,9 +10,9 @@ public class UpdateCustomerTests : CustomerTestBase
     var command = new UpdateCustomerCommand
     {
       CurrentEmail = _fakeCustomer.Email,
-      Name = "Novo Nome",
+      Name = "New Name",
       BirthDate = new DateTime(2001, 07, 25),
-      Email = "novo_email@email.com"
+      Email = "new_email@email.com"
     };
 
     _customerRepositoryMock
@@ -20,7 +20,7 @@ public class UpdateCustomerTests : CustomerTestBase
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
-         .Setup(repo => repo.IsEmailUnique(_fakeCustomer.Email))
+         .Setup(repo => repo.IsEmailUnique(command.Email))
          .ReturnsAsync(true);
 
     var result = await _mediator.Send(command);
@@ -41,9 +41,9 @@ public class UpdateCustomerTests : CustomerTestBase
     var command = new UpdateCustomerCommand
     {
       CurrentEmail = _fakeCustomer.Email,
-      Name = "Novo Nome",
+      Name = "New Name",
       BirthDate = DateTime.Now.AddYears(-1),
-      Email = "novo_email@email.com"
+      Email = "new_email@email.com"
     };
 
     _customerRepositoryMock
@@ -51,7 +51,7 @@ public class UpdateCustomerTests : CustomerTestBase
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
-         .Setup(repo => repo.IsEmailUnique(_fakeCustomer.Email))
+         .Setup(repo => repo.IsEmailUnique(command.Email))
          .ReturnsAsync(true);
 
     var result = await _mediator.Send(command);
@@ -66,14 +66,14 @@ public class UpdateCustomerTests : CustomerTestBase
   }
 
   [Test]
-  public async Task CreateCustomer_EmailIsNotUnique_Failure()
+  public async Task UpdateCustomer_EmailIsNotUnique_Failure()
   {
     var command = new UpdateCustomerCommand
     {
       CurrentEmail = _fakeCustomer.Email,
-      Name = "Novo Nome",
+      Name = "New Name",
       BirthDate = new DateTime(2001, 07, 25),
-      Email = "novo_email@email.com"
+      Email = "new_email@email.com"
     };
 
     _customerRepositoryMock
@@ -81,7 +81,7 @@ public class UpdateCustomerTests : CustomerTestBase
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
-         .Setup(repo => repo.IsEmailUnique(_fakeCustomer.Email))
+         .Setup(repo => repo.IsEmailUnique(command.Email))
          .ReturnsAsync(false);
 
     var result = await _mediator.Send(command);
@@ -94,32 +94,30 @@ public class UpdateCustomerTests : CustomerTestBase
       Assert.That(result.Errors[0].Description, Is.EqualTo("The provided email is not unique."));
     });
   }
-  // FINALIZAR
-  [TestCase("", "2000-01-01", "test@example.com", "NotEmptyValidator", "'Name' deve ser informado.")]
-  [TestCase(null, "2000-01-01", "test@example.com", "NotNullValidator", "'Name' não pode ser nulo.")]
-  [TestCase("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "2000-01-01", "test@example.com", "MaximumLengthValidator", "'Name' deve ser menor ou igual a 255 caracteres. Você digitou 256 caracteres.")]
-  [TestCase("John Doe", "", "test@example.com", "NotEmptyValidator", "'Birth Date' deve ser informado.")]
-  [TestCase("John Doe", "2100-01-01", "test@example.com", "LessThanOrEqualValidator", "'Birth Date' deve ser inferior ou igual a")]
-  [TestCase("John Doe", "0001-01-01", "test@example.com", "GreaterThanValidator", "'Birth Date' deve ser superior a '01/01/0001 00:00:00'.")]
-  [TestCase("John Doe", "2000-01-01", "", "NotEmptyValidator", "'Email' deve ser informado.")]
-  [TestCase("John Doe", "2000-01-01", null, "NotNullValidator", "'Email' não pode ser nulo.")]
-  [TestCase("John Doe", "2000-01-01", "invalid-email", "EmailValidator", "'Email' é um endereço de email inválido.")]
-  public async Task UpdateCustomer_FieldValidations(string name, string birthDate, string email, string expectedErrorCode, string expectedErrorMessage)
+
+  [TestCase("test@email.com", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "2000-01-01", "test@example.com", "MaximumLengthValidator", "'Name' deve ser menor ou igual a 255 caracteres. Você digitou 256 caracteres.")]
+  [TestCase("test@email.com", "John Doe", "2100-01-01", "test@example.com", "LessThanOrEqualValidator", "'Birth Date' deve ser inferior ou igual a")]
+  [TestCase("test@email.com", "John Doe", "0001-01-01", "test@example.com", "GreaterThanValidator", "'Birth Date' deve ser superior a '01/01/0001 00:00:00'.")]
+  [TestCase("", "John Doe", "2000-01-01", "test@example.com", "NotEmptyValidator", "'Current Email' deve ser informado.")]
+  [TestCase(null, "John Doe", "2000-01-01", "test@example.com", "NotNullValidator", "'Current Email' não pode ser nulo.")]
+  [TestCase("invalid-email", "John Doe", "2000-01-01", "test@example.com", "EmailValidator", "'Current Email' é um endereço de email inválido.")]
+  [TestCase("test@email.com", "John Doe", "2000-01-01", "invalid-email", "EmailValidator", "'Email' é um endereço de email inválido.")]
+  public async Task UpdateCustomer_FieldValidations(string currentEmail, string name, string birthDate, string email, string expectedErrorCode, string expectedErrorMessage)
   {
     var command = new UpdateCustomerCommand
     {
-      CurrentEmail = _fakeCustomer.Email,
+      CurrentEmail = currentEmail,
       Name = name,
       BirthDate = string.IsNullOrEmpty(birthDate) ? default : DateTime.Parse(birthDate),
       Email = email
     };
 
     _customerRepositoryMock
-         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email))
+         .Setup(repo => repo.GetByEmail(currentEmail))
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
-         .Setup(repo => repo.IsEmailUnique(_fakeCustomer.Email))
+         .Setup(repo => repo.IsEmailUnique(command.Email))
          .ReturnsAsync(true);
 
     var result = await _mediator.Send(command);
@@ -128,8 +126,8 @@ public class UpdateCustomerTests : CustomerTestBase
     {
       Assert.That(result.Errors, Is.Not.Null);
       Assert.That(result.IsSuccess, Is.False);
-      Assert.That(result.Errors.Any(e => e.Code == expectedErrorCode), Is.True, $"Codigo de erro esperado '{expectedErrorCode}'");
-      Assert.That(result.Errors.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Mensagem de erro esperada '{expectedErrorMessage}'");
+      Assert.That(result.Errors.Any(e => e.Code == expectedErrorCode), Is.True, $"Error code expected '{expectedErrorCode}'");
+      Assert.That(result.Errors.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Error message expected '{expectedErrorMessage}'");
     });
   }
 }
