@@ -13,7 +13,7 @@ public class DeleteCustomerByEmailTests : CustomerTestBase
     };
 
     _customerRepositoryMock
-         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email))
+         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email, false))
          .ReturnsAsync(_fakeCustomer);
 
     var result = await _mediator.Send(command);

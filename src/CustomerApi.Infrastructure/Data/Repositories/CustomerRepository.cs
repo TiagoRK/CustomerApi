@@ -16,28 +16,24 @@ public class CustomerRepository(CustomerDbContext dbContext) : ICustomerReposito
     return customer.Id;
   }
 
-  public async Task<Customer?> GetById(long id)
+  public Task<Customer?> GetById(long id, bool noTracking = false)
   {
-    var customer = await _dbContext.Customers.FirstOrDefaultAsync(customer => customer.Id == id);
+    var query = _dbContext.Customers.AsQueryable();
 
-    if (customer == null)
-    {
-      return null;
-    }
+    if (noTracking)
+      query = query.AsNoTracking();
 
-    return customer;
+    return query.FirstOrDefaultAsync(customer => customer.Id == id);
   }
 
-  public async Task<Customer?> GetByEmail(string email)
+  public Task<Customer?> GetByEmail(string email, bool noTracking = false)
   {
-    var customer = await _dbContext.Customers.FirstOrDefaultAsync(customer => customer.Email == email);
+    var query = _dbContext.Customers.AsQueryable();
 
-    if (customer == null)
-    {
-      return null;
-    }
+    if (noTracking)
+      query = query.AsNoTracking();
 
-    return customer;
+    return query.FirstOrDefaultAsync(customer => customer.Email == email);
   }
 
   public async Task<bool> IsEmailUnique(string email)
