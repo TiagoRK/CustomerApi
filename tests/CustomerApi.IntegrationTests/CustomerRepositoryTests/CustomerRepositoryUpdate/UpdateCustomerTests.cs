@@ -40,9 +40,6 @@ public class UpdateCustomerTests : CustomerRepositoryTestBase
       customerToUpdate.UpdateEmail(_faker.Internet.Email());
 
       await _customerRepository.Update(customerToUpdate);
-
-      var entry = _dbContext.Entry(customerToUpdate);
-      await entry.ReloadAsync();
     }
 
     var customersAfterUpdate = await Task.WhenAll(idList.Select(id => _customerRepository.GetById(id)));
@@ -61,6 +58,7 @@ public class UpdateCustomerTests : CustomerRepositoryTestBase
     }
   }
 
+  [Test]
   public async Task UpdateCustomer_EmailNotUnique_Fail()
   {
     var id = await _customerRepository.Create(_fakeCustomer);
