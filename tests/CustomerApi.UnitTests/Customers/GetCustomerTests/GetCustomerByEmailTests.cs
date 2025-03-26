@@ -16,7 +16,7 @@ public class GetCustomerByEmailTests : CustomerTestBase
     _fakeCustomer.Email = query.Email;
 
     _customerRepositoryMock
-         .Setup(repo => repo.GetByEmail(query.Email))
+         .Setup(repo => repo.GetByEmail(query.Email, false))
          .ReturnsAsync(_fakeCustomer);
 
     var result = await _mediator.Send(query);
@@ -42,7 +42,7 @@ public class GetCustomerByEmailTests : CustomerTestBase
     _fakeCustomer.Email = query.Email;
 
     _customerRepositoryMock
-        .Setup(repo => repo.GetByEmail(query.Email))
+        .Setup(repo => repo.GetByEmail(query.Email, false))
         .ReturnsAsync((Customer?)null);
 
     var result = await _mediator.Send(query);

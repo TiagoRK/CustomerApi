@@ -10,9 +10,8 @@ public abstract class CustomerRepositoryTestBase
 {
   protected CustomerDbContext _dbContext;
   protected CustomerRepository _customerRepository;
-  public Customer _fakeCustomer { get; set; }
+  protected Customer _fakeCustomer { get; set; }
   protected Faker _faker;
-
 
   public CustomerRepositoryTestBase()
   {
@@ -66,7 +65,10 @@ public abstract class CustomerRepositoryTestBase
         .BuildServiceProvider();
 
     var builder = new DbContextOptionsBuilder<CustomerDbContext>();
-    builder.UseInMemoryDatabase("mockdatabase")
+
+    var inMemoryCollectionName = Guid.NewGuid().ToString();
+
+    builder.UseInMemoryDatabase(inMemoryCollectionName)
            .UseInternalServiceProvider(serviceProvider);
 
     return builder.Options;

@@ -16,7 +16,7 @@ public class UpdateCustomerTests : CustomerTestBase
     };
 
     _customerRepositoryMock
-         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email))
+         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email, false))
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
@@ -47,7 +47,7 @@ public class UpdateCustomerTests : CustomerTestBase
     };
 
     _customerRepositoryMock
-         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email))
+         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email, false))
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
@@ -77,7 +77,7 @@ public class UpdateCustomerTests : CustomerTestBase
     };
 
     _customerRepositoryMock
-         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email))
+         .Setup(repo => repo.GetByEmail(_fakeCustomer.Email, false))
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
@@ -113,7 +113,7 @@ public class UpdateCustomerTests : CustomerTestBase
     };
 
     _customerRepositoryMock
-         .Setup(repo => repo.GetByEmail(currentEmail))
+         .Setup(repo => repo.GetByEmail(currentEmail, false))
          .ReturnsAsync(_fakeCustomer);
 
     _customerRepositoryMock
