@@ -19,20 +19,26 @@ public class ApiController : ControllerBase
 
     if (Equals(response.Value, default(TValue)))
     {
-      return Ok();
+      return NotFound();
     }
 
-    if (IsResultAnEmptyList(response))
+    if (response.Value != null && response.Value.GetType().IsGenericType &&
+        response.Value.GetType().GetGenericTypeDefinition() == typeof(PagedResponse<>))
     {
-      return NoContent();
+      var pagedResponse = (dynamic)response.Value;
+      if (IsResultAnEmptyList(pagedResponse))
+      {
+        return NoContent();
+      }
     }
+
 
     return Ok(response.Value);
   }
 
-  private static bool IsResultAnEmptyList<TValue, TError>(Result<TValue, TError> response)
+  private static bool IsResultAnEmptyList<TValue>(PagedResponse<TValue> response)
   {
-    IEnumerable<TValue>? list = response.Value as IEnumerable<TValue>;
-    return list != null && !list.Cast<object>().Any();
+    return response.Data.Count == 0;
   }
+
 }

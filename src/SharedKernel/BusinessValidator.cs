@@ -41,30 +41,14 @@ public abstract class BusinessValidator<T> : IBusinessValidator
       }
     }
 
-    using var validationCts = new CancellationTokenSource();
-    var cancellationToken = validationCts.Token;
-
-    var tasks = _asyncBusinessRules
-        .Select(rule => Task.Run(async () =>
-        {
-          var isValid = await rule.ValidationFunc(command);
-          return (isValid, rule.ValidationErrorFunc(command));
-        }, cancellationToken))
-        .ToList();
-
-    while (tasks.Count != 0)
+    foreach (var (validationFunc, validationErrorFunc) in _asyncBusinessRules)
     {
-      var completedTask = await Task.WhenAny(tasks);
-
-      var (isValid, validationError) = await completedTask;
-
+      var isValid = await validationFunc(command);
       if (!isValid)
       {
-        errors.Add(validationError);
-        cancellationToken.ThrowIfCancellationRequested();
+        errors.Add(validationErrorFunc(command));
+        break;
       }
-
-      tasks.Remove(completedTask);
     }
 
     return errors;

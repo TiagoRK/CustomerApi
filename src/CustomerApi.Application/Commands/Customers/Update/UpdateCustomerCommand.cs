@@ -1,11 +1,11 @@
 ﻿using System.Text.Json.Serialization;
-using CustomerApi.Domain.Customers;
+using CustomerApi.Domain.Customers.DTO;
 using CustomerApi.SharedKernel;
 using FluentValidation;
 using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Update;
-public class UpdateCustomerCommand : CommandValidator, IRequest<Result<Customer, Error>>
+public class UpdateCustomerCommand : CommandValidator, IRequest<Result<GetCustomerResponse, Error>>
 {
   [JsonIgnore]
   public string CurrentEmail { get; set; }

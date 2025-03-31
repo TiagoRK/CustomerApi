@@ -1,5 +1,6 @@
 ﻿using CustomerApi.Domain.Constants;
 using CustomerApi.Domain.Customers;
+using CustomerApi.Domain.Customers.DTO;
 using CustomerApi.SharedKernel;
 using MediatR;
 
@@ -32,7 +33,12 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
     var newCustomer = new Customer(request.Name, request.BirthDate, request.Email);
     await _customerRepository.Create(newCustomer);
 
-    return Result<object, Error>.SuccessWithNull();
+    return new GetCustomerResponse()
+    {
+      Name = request.Name,
+      BirthDate = request.BirthDate,
+      Email = request.Email,
+    };
   }
 
   public override void AddBusinessRules()

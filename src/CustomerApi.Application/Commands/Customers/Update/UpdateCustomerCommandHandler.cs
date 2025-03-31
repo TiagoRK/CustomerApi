@@ -1,10 +1,11 @@
 ﻿using CustomerApi.Domain.Constants;
 using CustomerApi.Domain.Customers;
+using CustomerApi.Domain.Customers.DTO;
 using CustomerApi.SharedKernel;
 using MediatR;
 
 namespace CustomerApi.Application.Commands.Customers.Update;
-public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerCommand>, IRequestHandler<UpdateCustomerCommand, Result<Customer, Error>>
+public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerCommand>, IRequestHandler<UpdateCustomerCommand, Result<GetCustomerResponse, Error>>
 {
   private readonly ICustomerRepository _customerRepository;
 
@@ -15,7 +16,7 @@ public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerComm
     AddBusinessRules();
   }
 
-  public async Task<Result<Customer, Error>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
+  public async Task<Result<GetCustomerResponse, Error>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
   {
     if (!request.IsValid())
     {
@@ -34,9 +35,14 @@ public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerComm
     if (request.BirthDate != default) customer.UpdateBirthdate(request.BirthDate);
     if (!string.IsNullOrEmpty(request.Email)) customer.UpdateEmail(request.Email);
 
-    await _customerRepository.Update(customer);
+    await _customerRepository.Update(customer!);
 
-    return customer;
+    return new GetCustomerResponse()
+    {
+      Name = customer.Name,
+      BirthDate = customer.BirthDate,
+      Email = customer.Email
+    };
   }
 
   public override void AddBusinessRules()

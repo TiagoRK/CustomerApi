@@ -19,6 +19,11 @@ public class GetPagedQueryHandler(ICustomerRepository customerRepository) : IReq
       Email = customer.Email,
     }).ToList();
 
-    return new PagedResponse<GetCustomerResponse>(customersDTO, pagedResult.PageNumber, pagedResult.PageSize, pagedResult.TotalRecords);
+    return new PagedResponse<GetCustomerResponse>(
+      customersDTO,
+      pagedResult.PageNumber,
+      pagedResult.PageSize,
+      pagedResult.TotalRecords
+    );
   }
 }
