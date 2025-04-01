@@ -28,6 +28,7 @@ public class DeleteCustomerByEmailTests(CustomWebApplicationFactory<Program> fac
     var result = await _client.DeleteAsync(
         $"/customers/deleteCustomerByEmail/falseemail@email.com");
 
-    Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+    Assert.Equal(HttpStatusCode.UnprocessableEntity, result.StatusCode);
   }
 }
+

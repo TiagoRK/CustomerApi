@@ -23,7 +23,7 @@ public class DeleteCustomerByEmailCommandHandler : IRequestHandler<DeleteCustome
 
     if (customerToDelete == null)
     {
-      return Result<object, Error>.SuccessWithNull();
+      return CustomerErrors.CustomerWithEmailNotFound(request.Email);
     }
 
     await _customerRepository.Delete(customerToDelete!);

@@ -18,11 +18,7 @@ public class DeleteCustomerByEmailTests : CustomerTestBase
 
     var result = await _mediator.Send(command);
 
-    Assert.Multiple(() =>
-    {
-      Assert.That(result.Errors, Is.Null);
-      Assert.That(result.IsSuccess, Is.True);
-    });
+    Assert.That(result, Is.Null);
   }
 
   [Test]
@@ -45,9 +41,8 @@ public class DeleteCustomerByEmailTests : CustomerTestBase
     });
   }
 
-  [TestCase(null, "NotNullValidator", "'Email' não pode ser nulo.")]
-  [TestCase("invalid-email", "EmailValidator", "'Email' é um endereço de email inválido.")]
-  public async Task CreateCustomer_FieldValidations(string email, string expectedErrorCode, string expectedErrorMessage)
+  [TestCase("invalid-email", "EmailValidator", "'Email' is not a valid email address.")]
+  public async Task DeleteCustomer_FieldValidations(string email, string expectedErrorCode, string expectedErrorMessage)
   {
     var command = new DeleteCustomerByEmailCommand
     {

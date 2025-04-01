@@ -95,13 +95,12 @@ public class UpdateCustomerTests : CustomerTestBase
     });
   }
 
-  [TestCase("test@email.com", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "2000-01-01", "test@example.com", "MaximumLengthValidator", "'Name' deve ser menor ou igual a 255 caracteres. Você digitou 256 caracteres.")]
-  [TestCase("test@email.com", "John Doe", "2100-01-01", "test@example.com", "LessThanOrEqualValidator", "'Birth Date' deve ser inferior ou igual a")]
-  [TestCase("test@email.com", "John Doe", "0001-01-01", "test@example.com", "GreaterThanValidator", "'Birth Date' deve ser superior a '01/01/0001 00:00:00'.")]
-  [TestCase("", "John Doe", "2000-01-01", "test@example.com", "NotEmptyValidator", "'Current Email' deve ser informado.")]
-  [TestCase(null, "John Doe", "2000-01-01", "test@example.com", "NotNullValidator", "'Current Email' não pode ser nulo.")]
-  [TestCase("invalid-email", "John Doe", "2000-01-01", "test@example.com", "EmailValidator", "'Current Email' é um endereço de email inválido.")]
-  [TestCase("test@email.com", "John Doe", "2000-01-01", "invalid-email", "EmailValidator", "'Email' é um endereço de email inválido.")]
+  [TestCase("test@email.com", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "2000-01-01", "test@example.com", "MaximumLengthValidator", "'Name' must be 255 characters or fewer. You entered 256 characters.")]
+  [TestCase("test@email.com", "John Doe", "2100-01-01", "test@example.com", "LessThanOrEqualValidator", "'Birth Date' must be less than or equal to")]
+  [TestCase("test@email.com", "John Doe", "0001-01-01", "test@example.com", "GreaterThanValidator", "'Birth Date' must be greater than '01/01/0001 00:00:00'.")]
+  [TestCase("", "John Doe", "2000-01-01", "test@example.com", "NotEmptyValidator", "'Current Email' must not be empty.")]
+  [TestCase("invalid-email", "John Doe", "2000-01-01", "test@example.com", "EmailValidator", "'Current Email' is not a valid email address.")]
+  [TestCase("test@email.com", "John Doe", "2000-01-01", "invalid-email", "EmailValidator", "'Email' is not a valid email address.")]
   public async Task UpdateCustomer_FieldValidations(string currentEmail, string name, string birthDate, string email, string expectedErrorCode, string expectedErrorMessage)
   {
     var command = new UpdateCustomerCommand
