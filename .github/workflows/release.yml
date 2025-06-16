@@ -42,19 +42,15 @@ jobs:
 
       - name: Set environment variables
         run: |
-          # Extract ENV_ prefixed variables from ALL_SECRETS
           ENV_VARS=$(echo "$ALL_SECRETS" | jq -r 'to_entries | .[] | select(.key | startswith("ENV_")) | "\(.key)=\(.value)"')
           echo "Extracted ENV Vars: $ENV_VARS"
 
-          # Check if values.yaml already has an env section and remove it if it does
           if grep -q '^env:' ./tools/helm/customer-api-chart/values.yaml; then
             sed -i '/^env:/,/^}/d' ./tools/helm/customer-api-chart/values.yaml
           fi
 
-          # Append the env block to the end of the values.yaml file
           echo "env: {" >> ./tools/helm/customer-api-chart/values.yaml
 
-          # Loop through each variable and export it
           echo "$ENV_VARS" | while IFS='=' read -r key value; do
             if [[ "$key" =~ ^ENV_ ]]; then
               new_key="${key#ENV_}"  # Remove the ENV_ prefix for the variable name
@@ -65,7 +61,6 @@ jobs:
             fi
           done
 
-          # Close the env block
           echo "}" >> ./tools/helm/customer-api-chart/values.yaml
 
       - name: Secrets to Env
@@ -73,26 +68,16 @@ jobs:
         with:
           secrets: ${{ toJSON(secrets) }}
 
-      - name: Print all environment variables
-        run: |
-          echo "Environment Variables:"
-          printenv
-
       - name: Replace tokens in values.yaml
         run: |
           FILE_PATH="./tools/helm/customer-api-chart/values.yaml"
           
-          # Loop through all environment variables and replace tokens with their actual values
           for var in $(compgen -e); do
             value="${!var}"
             token="\${$var}"
             
-            # Use awk to replace tokens in the file
             awk -v token="$token" -v value="$value" '{gsub(token, value); print}' "$FILE_PATH" > temp.yaml && mv temp.yaml "$FILE_PATH"
           done
-          
-      - name: Show updated values.yaml
-        run: cat ./tools/helm/customer-api-chart/values.yaml
           
       - name: Deploy with Helm
         run: |
