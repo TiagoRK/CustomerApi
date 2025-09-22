@@ -14,6 +14,7 @@ public class GetPagedQueryHandler(ICustomerRepository customerRepository) : IReq
 
     var customersDTO = pagedResult.Data.Select(customer => new GetCustomerResponse()
     {
+      Id = customer.Id,
       Name = customer.Name,
       BirthDate = customer.BirthDate,
       Email = customer.Email,

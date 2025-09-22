@@ -10,18 +10,17 @@ namespace CustomerApi.Infrastructure.IOC;
 
 public static class InfrastructureServiceExtensions
 {
-  public static IServiceCollection AddInfrastructureServices(
-    this IServiceCollection services,
-    ConfigurationManager config,
-    ILogger logger)
+  public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ConfigurationManager config, ILogger logger)
   {
     var connectionString = config.GetConnectionString("Database");
-    services.AddDbContext<CustomerDbContext>(options =>
-     options.UseNpgsql(connectionString));
+
+    services.AddDbContext<CustomerDbContext>(options => options.UseNpgsql(connectionString));
+
+    logger.LogInformation("Database context added");
 
     services.AddScoped<ICustomerRepository, CustomerRepository>();
 
-    logger.LogInformation("{Project} services registered", "Infrastructure");
+    logger.LogInformation("Repositories registered");
 
     return services;
   }

@@ -31,10 +31,11 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
     }
 
     var newCustomer = new Customer(request.Name, request.BirthDate, request.Email);
-    await _customerRepository.Create(newCustomer);
+    var createdId = await _customerRepository.Create(newCustomer);
 
     return new GetCustomerResponse()
     {
+      Id = createdId,
       Name = request.Name,
       BirthDate = request.BirthDate,
       Email = request.Email,

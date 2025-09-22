@@ -28,6 +28,6 @@ public class DeleteCustomerByEmailCommandHandler : IRequestHandler<DeleteCustome
 
     await _customerRepository.Delete(customerToDelete!);
 
-    return null;
+    return Result<object, Error>.SuccessWithNull();
   }
 }

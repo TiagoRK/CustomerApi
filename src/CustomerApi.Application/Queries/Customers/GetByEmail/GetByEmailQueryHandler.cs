@@ -19,6 +19,7 @@ public class GetByEmailQueryHandler(ICustomerRepository customerRepository) : IR
 
     return new GetCustomerResponse()
     {
+      Id = customer.Id,
       Name = customer.Name,
       BirthDate = customer.BirthDate,
       Email = customer.Email,

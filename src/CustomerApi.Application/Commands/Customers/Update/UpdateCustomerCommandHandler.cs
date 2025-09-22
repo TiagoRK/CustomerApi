@@ -39,6 +39,7 @@ public class UpdateCustomerCommandHandler : BusinessValidator<UpdateCustomerComm
 
     return new GetCustomerResponse()
     {
+      Id = customer.Id,
       Name = customer.Name,
       BirthDate = customer.BirthDate,
       Email = customer.Email

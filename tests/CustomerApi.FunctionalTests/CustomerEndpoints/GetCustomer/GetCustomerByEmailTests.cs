@@ -2,11 +2,9 @@
 using Ardalis.HttpClientTestExtensions;
 using CustomerApi.Domain.Customers.DTO;
 
-namespace CustomerApi.FunctionalTests.CustomerEndpoints;
-public class GetCustomerByEmailTests(CustomWebApplicationFactory<Program> factory) : IClassFixture<CustomWebApplicationFactory<Program>>
+namespace CustomerApi.FunctionalTests.CustomerEndpoints.GetCustomer;
+public class GetCustomerByEmailTests(CustomWebApplicationFactory<Program> factory) : GetCustomerFixture(factory)
 {
-  private readonly HttpClient _client = factory.CreateClient();
-
   [Fact]
   public async Task GetCustomer()
   {

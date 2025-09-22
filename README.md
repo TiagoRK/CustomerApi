@@ -10,3 +10,4 @@
 8 - Criar docker para rodar projeto localmente (pasta tools)
 9 - Adicionar Architecture testing
 10 - Adicionar Pipeline Behavior no Mediatr para rodar validações automaticamente
+11 - Adicionar evento para envio de email/sms de criação de customer

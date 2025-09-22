@@ -3,12 +3,10 @@ using Ardalis.HttpClientTestExtensions;
 using CustomerApi.Domain.Customers.DTO;
 using CustomerApi.SharedKernel;
 
-namespace CustomerApi.FunctionalTests.CustomerEndpoints;
+namespace CustomerApi.FunctionalTests.CustomerEndpoints.GetCustomer;
 
-public class GetCustomerPagedTests(CustomWebApplicationFactory<Program> factory) : IClassFixture<CustomWebApplicationFactory<Program>>
+public class GetCustomerPagedTests(CustomWebApplicationFactory<Program> factory) : GetCustomerFixture(factory)
 {
-  private readonly HttpClient _client = factory.CreateClient();
-
   [Fact]
   public async Task GetPagedCustomers()
   {

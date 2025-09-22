@@ -18,7 +18,7 @@ public class DeleteCustomerByEmailTests : CustomerTestBase
 
     var result = await _mediator.Send(command);
 
-    Assert.That(result, Is.Null);
+    Assert.That(result.IsSuccess);
   }
 
   [Test]

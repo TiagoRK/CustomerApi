@@ -3,11 +3,9 @@ using System.Net.Http.Json;
 using Ardalis.HttpClientTestExtensions;
 using CustomerApi.Domain.Customers.DTO;
 
-namespace CustomerApi.FunctionalTests.CustomerEndpoints;
-public class UpdateCustomerTests(CustomWebApplicationFactory<Program> factory) : IClassFixture<CustomWebApplicationFactory<Program>>
+namespace CustomerApi.FunctionalTests.CustomerEndpoints.UpdateCustomer;
+public class UpdateCustomerTests(CustomWebApplicationFactory<Program> factory) : UpdateCustomerFixture(factory)
 {
-  private readonly HttpClient _client = factory.CreateClient();
-
   [Fact]
   public async Task UpdateCustomer()
   {

@@ -1,15 +1,12 @@
-﻿using CustomerApi.Infrastructure.IOC;
-
-namespace CustomerApi.Web.Configurations;
+﻿namespace CustomerApi.Web.Configurations;
 
 public static class ServiceConfigs
 {
-  public static IServiceCollection AddServiceConfigs(this IServiceCollection services, ILogger logger, WebApplicationBuilder builder)
+  public static IServiceCollection AddServices(this IServiceCollection services, ILogger logger)
   {
-    services.AddInfrastructureServices(builder.Configuration, logger)
-            .AddMediatrConfigs();
+    services.AddMediatrConfigs();
 
-    logger.LogInformation("{Project} services registered", "Mediatr");
+    logger.LogInformation("Mediatr registered");
 
     return services;
   }
