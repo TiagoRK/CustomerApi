@@ -72,6 +72,11 @@ public class CustomerController(IMediator mediator) : ApiController
 
     var result = await _mediator.Send(command);
 
+    if (result.Value is null && result.IsSuccess)
+    {
+      return Ok();
+    }
+
     return CustomResponse(result);
   }
 
