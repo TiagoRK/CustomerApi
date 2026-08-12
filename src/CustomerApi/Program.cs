@@ -25,7 +25,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructureServices(builder.Configuration, appLogger);
 builder.Services.AddExternalInfrastructureServices(builder.Configuration, appLogger);
-builder.Services.AddServices(appLogger);
+builder.Services.AddServices(builder.Configuration, appLogger);
 
 builder.Services.AddHealthChecks();
 
