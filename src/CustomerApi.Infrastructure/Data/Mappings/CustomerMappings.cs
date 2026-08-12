@@ -15,5 +15,8 @@ public class CustomerMapping : IEntityTypeConfiguration<Customer>
     customer.Property(p => p.Id).ValueGeneratedOnAdd();
     customer.Property(p => p.Name);
     customer.Property(p => p.BirthDate);
+    customer.Property(p => p.Email);
+
+    customer.HasIndex(p => p.Email).IsUnique();
   }
 }
