@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CustomerApi.Web.Middlewares;
 
-public sealed class IdempotencyMiddleware(RequestDelegate next)
+public class IdempotencyMiddleware(RequestDelegate next)
 {
   private readonly RequestDelegate _next = next;
 

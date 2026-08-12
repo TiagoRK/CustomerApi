@@ -1,4 +1,5 @@
-﻿using CustomerApi.Infrastructure.IOC;
+﻿using CustomerApi.Infraestructure.External.IOC;
+using CustomerApi.Infrastructure.IOC;
 using CustomerApi.Web.Configurations;
 using CustomerApi.Web.Middlewares;
 using Serilog;
@@ -23,6 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructureServices(builder.Configuration, appLogger);
+builder.Services.AddExternalInfrastructureServices(builder.Configuration, appLogger);
 builder.Services.AddServices(appLogger);
 
 builder.Services.AddHealthChecks();

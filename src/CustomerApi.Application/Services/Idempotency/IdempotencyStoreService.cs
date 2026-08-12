@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CustomerApi.Application.Services.Idempotency;
 
-public sealed class IdempotencyStoreService(IMemoryCache cache) : IIdempotencyStoreService
+public class IdempotencyStoreService(IMemoryCache cache) : IIdempotencyStoreService
 {
   //Pra fins de simplicidade, usando imemorycache mas futuramente trocar pra redis
   private readonly IMemoryCache _cache = cache;
