@@ -1,6 +1,7 @@
 ﻿using CustomerApi.Infraestructure.External.IOC;
 using CustomerApi.Infrastructure.IOC;
 using CustomerApi.Web.Configurations;
+using CustomerApi.Web.Filters;
 using CustomerApi.Web.Middlewares;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -21,7 +22,10 @@ var appLogger = new SerilogLoggerFactory(logger)
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+  options.OperationFilter<IdempotencySwaggerOperationFilter>();
+});
 
 builder.Services.AddInfrastructureServices(builder.Configuration, appLogger);
 builder.Services.AddExternalInfrastructureServices(builder.Configuration, appLogger);
