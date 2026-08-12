@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using CustomerApi.Application.Behaviors;
 using CustomerApi.Application.Commands.Customers.Create;
 using CustomerApi.Domain.Customers;
 
@@ -14,7 +15,11 @@ public static class MediatrConfigs
         Assembly.GetAssembly(typeof(CreateCustomerCommand))
       };
 
-    services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(mediatRAssemblies!));
+    services.AddMediatR(cfg =>
+    {
+      cfg.RegisterServicesFromAssemblies(mediatRAssemblies!);
+      cfg.AddOpenBehavior(typeof(CommandValidationPipelineBehavior<,>));
+    });
 
     return services;
   }

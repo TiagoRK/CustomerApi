@@ -14,11 +14,6 @@ public class DeleteCustomerByEmailCommandHandler : IRequestHandler<DeleteCustome
 
   public async Task<Result<object, Error>?> Handle(DeleteCustomerByEmailCommand request, CancellationToken cancellationToken)
   {
-    if (!request.IsValid())
-    {
-      return request.ValidationErrors;
-    }
-
     var customerToDelete = await _customerRepository.GetByEmail(request.Email);
 
     if (customerToDelete == null)

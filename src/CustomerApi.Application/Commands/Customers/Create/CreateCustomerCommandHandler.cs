@@ -19,11 +19,6 @@ public class CreateCustomerCommandHandler : BusinessValidator<CreateCustomerComm
 
   public async Task<Result<object, Error>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
   {
-    if (!request.IsValid())
-    {
-      return request.ValidationErrors;
-    }
-
     var businessErrors = await Validate(request);
     if (businessErrors.Count != 0)
     {

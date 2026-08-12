@@ -5,6 +5,7 @@ using CustomerApi.Application.Queries.Customers.GetByEmail;
 using CustomerApi.Application.Queries.Customers.GetPaged;
 using CustomerApi.Domain.Customers.DTO;
 using CustomerApi.SharedKernel;
+using CustomerApi.Web.Attributes;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ public class CustomerController(IMediator mediator) : ApiController
   [Produces("application/json")]
   [ProducesResponseType(StatusCodes.Status201Created)]
   [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
+  [IsIdempotent]
   [HttpPost("createCustomer", Name = "CreateCustomer")]
   public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequest request)
   {
@@ -43,6 +45,7 @@ public class CustomerController(IMediator mediator) : ApiController
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
   [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
+  [IsIdempotent]
   [HttpPut("updateCustomer/{email}", Name = "UpdateCustomer")]
   public async Task<IActionResult> UpdateCustomer([FromRoute] string email, [FromBody] UpdateCustomerRequest request)
   {
@@ -62,6 +65,7 @@ public class CustomerController(IMediator mediator) : ApiController
   [Produces("application/json")]
   [ProducesResponseType(StatusCodes.Status200OK)]
   [ProducesResponseType(StatusCodes.Status404NotFound)]
+  [IsIdempotent]
   [HttpDelete("deleteCustomerByEmail/{email}", Name = "DeleteCustomerByEmail")]
   public async Task<IActionResult> DeleteCustomerByEmail([FromRoute] string email)
   {
