@@ -1,4 +1,4 @@
-﻿using CustomerApi.Infraestructure.External.IOC;
+using CustomerApi.Infraestructure.External.IOC;
 using CustomerApi.Infrastructure.IOC;
 using CustomerApi.Web.Configurations;
 using CustomerApi.Web.Filters;
@@ -22,6 +22,7 @@ var appLogger = new SerilogLoggerFactory(logger)
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddLocalizationConfigs();
 builder.Services.AddSwaggerGen(options =>
 {
   options.OperationFilter<IdempotencySwaggerOperationFilter>();
@@ -42,6 +43,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseLocalizationConfigs();
 
 app.UseAuthorization();
 

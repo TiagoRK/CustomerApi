@@ -1,5 +1,6 @@
-﻿using CustomerApi.Application.Commands.Customers.Delete;
+using CustomerApi.Application.Commands.Customers.Delete;
 using Moq;
+using System.Globalization;
 
 namespace CustomerApi.UnitTests.Customers.DeleteCustomerTests;
 public class DeleteCustomerByEmailTests : CustomerTestBase
@@ -24,13 +25,14 @@ public class DeleteCustomerByEmailTests : CustomerTestBase
   [Test]
   public async Task DeleteCustomer_CustomerNotFound_Failure()
   {
+    CultureInfo.CurrentUICulture = new CultureInfo("en");
+
     var command = new DeleteCustomerByEmailCommand
     {
       Email = _fakeCustomer.Email
     };
 
     var result = await _mediator.Send(command);
-
 
     Assert.Multiple(() =>
     {

@@ -1,5 +1,6 @@
-﻿using CustomerApi.Application.Commands.Customers.Update;
+using CustomerApi.Application.Commands.Customers.Update;
 using Moq;
+using System.Globalization;
 
 namespace CustomerApi.UnitTests.Customers.UpdateCustomerTests;
 public class UpdateCustomerTests : CustomerTestBase
@@ -38,6 +39,8 @@ public class UpdateCustomerTests : CustomerTestBase
   [Test]
   public async Task UpdateCustomer_IsNotOfLegalAge_Failure()
   {
+    CultureInfo.CurrentUICulture = new CultureInfo("en");
+
     var command = new UpdateCustomerCommand
     {
       CurrentEmail = _fakeCustomer.Email,
@@ -68,6 +71,8 @@ public class UpdateCustomerTests : CustomerTestBase
   [Test]
   public async Task UpdateCustomer_EmailIsNotUnique_Failure()
   {
+    CultureInfo.CurrentUICulture = new CultureInfo("en");
+
     var command = new UpdateCustomerCommand
     {
       CurrentEmail = _fakeCustomer.Email,
