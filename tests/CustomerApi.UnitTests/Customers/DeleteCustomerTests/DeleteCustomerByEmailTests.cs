@@ -46,6 +46,8 @@ public class DeleteCustomerByEmailTests : CustomerTestBase
   [TestCase("invalid-email", "EmailValidator", "'Email' is not a valid email address.")]
   public async Task DeleteCustomer_FieldValidations(string email, string expectedErrorCode, string expectedErrorMessage)
   {
+    CultureInfo.CurrentUICulture = new CultureInfo("en");
+
     var command = new DeleteCustomerByEmailCommand
     {
       Email = email
@@ -57,8 +59,8 @@ public class DeleteCustomerByEmailTests : CustomerTestBase
     {
       Assert.That(result.Errors, Is.Not.Null);
       Assert.That(result.IsSuccess, Is.False);
-      Assert.That(result.Errors.Any(e => e.Code == expectedErrorCode), Is.True, $"Codigo de erro esperado '{expectedErrorCode}'");
-      Assert.That(result.Errors.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Mensagem de erro esperada '{expectedErrorMessage}'");
+      Assert.That(result.Errors!.Any(e => e.Code == expectedErrorCode), Is.True, $"Codigo de erro esperado '{expectedErrorCode}'");
+      Assert.That(result.Errors!.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Mensagem de erro esperada '{expectedErrorMessage}'");
     });
   }
 }

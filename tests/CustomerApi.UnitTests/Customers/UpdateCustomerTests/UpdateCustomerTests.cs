@@ -108,6 +108,8 @@ public class UpdateCustomerTests : CustomerTestBase
   [TestCase("test@email.com", "John Doe", "2000-01-01", "invalid-email", "EmailValidator", "'Email' is not a valid email address.")]
   public async Task UpdateCustomer_FieldValidations(string currentEmail, string name, string birthDate, string email, string expectedErrorCode, string expectedErrorMessage)
   {
+    CultureInfo.CurrentUICulture = new CultureInfo("en");
+
     var command = new UpdateCustomerCommand
     {
       CurrentEmail = currentEmail,
@@ -130,8 +132,8 @@ public class UpdateCustomerTests : CustomerTestBase
     {
       Assert.That(result.Errors, Is.Not.Null);
       Assert.That(result.IsSuccess, Is.False);
-      Assert.That(result.Errors.Any(e => e.Code == expectedErrorCode), Is.True, $"Error code expected '{expectedErrorCode}'");
-      Assert.That(result.Errors.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Error message expected '{expectedErrorMessage}'");
+      Assert.That(result.Errors!.Any(e => e.Code == expectedErrorCode), Is.True, $"Error code expected '{expectedErrorCode}'");
+      Assert.That(result.Errors!.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Error message expected '{expectedErrorMessage}'");
     });
   }
 }
