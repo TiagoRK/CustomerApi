@@ -1,8 +1,8 @@
 using CustomerApi.Extensions;
 
-using CustomerApi.Configurations;
+using CustomerApi.Web.Configurations;
 using CustomerApi.Extensions;
-using CustomerApi.Middlewares;
+using CustomerApi.Web.Middlewares;
 using CustomerApi.Web.Filters;
 using Serilog;
 
