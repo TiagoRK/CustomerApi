@@ -15,8 +15,6 @@ public class CreateCustomerCommand : CommandValidator, IRequest<Result<object, E
   {
     var validator = new InlineValidator<CreateCustomerCommand>();
 
-    ValidatorOptions.Global.LanguageManager.Enabled = false;
-
     validator.RuleFor(x => x.Name)
         .NotEmpty()
         .NotNull()

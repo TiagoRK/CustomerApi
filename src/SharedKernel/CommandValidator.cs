@@ -11,7 +11,6 @@ public abstract class CommandValidator
 
   public virtual bool IsValid()
   {
-    FluentValidation.ValidatorOptions.Global.LanguageManager.Enabled = false;
     return ValidationResult.IsValid;
   }
 }
