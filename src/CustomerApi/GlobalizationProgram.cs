@@ -1,5 +1,11 @@
 using CustomerApi.Extensions;
 
+using CustomerApi.Configurations;
+using CustomerApi.Extensions;
+using CustomerApi.Middlewares;
+using CustomerApi.Web.Filters;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddGlobalization(builder.Configuration);
