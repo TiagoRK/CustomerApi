@@ -6,8 +6,6 @@ using CustomerApi.Web.Middlewares;
 using Serilog;
 using Serilog.Extensions.Logging;
 
-var builder = WebApplication.CreateBuilder(args);
-
 var logger = Log.Logger = new LoggerConfiguration()
   .Enrich.FromLogContext()
   .WriteTo.Console()
