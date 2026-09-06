@@ -1,10 +1,13 @@
-using CustomerApi.Extensions;
+using Microsoft.Extensions.Logging;
 
 using CustomerApi.Web.Configurations;
 using CustomerApi.Extensions;
 using CustomerApi.Web.Middlewares;
 using CustomerApi.Web.Filters;
 using Serilog;
+using Serilog.Extensions.Logging;
+using CustomerApi.Infrastructure.IOC;
+using CustomerApi.Infraestructure.External.IOC;
 
 var builder = WebApplication.CreateBuilder(args);
 
