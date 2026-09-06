@@ -165,6 +165,8 @@ public class CreateCustomerTests : CustomerTestBase
   [TestCase("John Doe", "2000-01-01", "invalid-email", "EmailValidator", "'Email' is not a valid email address.")]
   public async Task CreateCustomer_FieldValidations(string name, string birthDate, string email, string expectedErrorCode, string expectedErrorMessage)
   {
+    CultureInfo.CurrentUICulture = new CultureInfo("en");
+
     var command = new CreateCustomerCommand
     {
       Name = name,
@@ -178,8 +180,8 @@ public class CreateCustomerTests : CustomerTestBase
     {
       Assert.That(result.Errors, Is.Not.Null);
       Assert.That(result.IsSuccess, Is.False);
-      Assert.That(result.Errors.Any(e => e.Code == expectedErrorCode), Is.True, $"Codigo de erro esperado '{expectedErrorCode}'");
-      Assert.That(result.Errors.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Mensagem de erro esperada '{expectedErrorMessage}'");
+      Assert.That(result.Errors!.Any(e => e.Code == expectedErrorCode), Is.True, $"Codigo de erro esperado '{expectedErrorCode}'");
+      Assert.That(result.Errors!.Any(e => e.Description.Contains(expectedErrorMessage)), Is.True, $"Mensagem de erro esperada '{expectedErrorMessage}'");
     });
   }
 }
