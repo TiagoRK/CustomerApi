@@ -14,7 +14,6 @@ public class CreateCustomerCommand : CommandValidator, IRequest<Result<object, E
   public override bool IsValid()
   {
     var validator = new InlineValidator<CreateCustomerCommand>();
-    validator.UsingMessageLocalizer(null);
 
     ValidatorOptions.Global.LanguageManager.Enabled = false;
 
