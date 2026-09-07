@@ -12,4 +12,5 @@ public class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : Db
   {
     modelBuilder.ApplyConfiguration(new CustomerMapping());
   }
+  public DbSet<LogEntry> LogEntries => Set<LogEntry>();
 }
