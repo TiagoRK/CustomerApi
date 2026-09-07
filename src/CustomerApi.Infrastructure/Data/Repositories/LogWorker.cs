@@ -1,6 +1,6 @@
 using CustomerApi.Domain.Logging;
 using CustomerApi.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,7 +16,7 @@ public class LogWorker(ILogEntryChannel logEntryChannel, IServiceScopeFactory sc
       try
       {
         using var scope = scopeFactory.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<CustomerDbContext>();
         dbContext.LogEntries.Add(entry);
         await dbContext.SaveChangesAsync(stoppingToken);
       }
