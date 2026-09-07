@@ -1,4 +1,5 @@
-﻿using CustomerApi.Domain.Customers;
+﻿using CustomerApi.Domain.Logging;
+using CustomerApi.Domain.Customers;
 using CustomerApi.Infrastructure.Data.Mappings;
 using Microsoft.EntityFrameworkCore;
 
