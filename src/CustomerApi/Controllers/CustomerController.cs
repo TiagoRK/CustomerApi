@@ -15,7 +15,9 @@ namespace CustomerApi.Web.Controllers;
 [Route("/customers")]
 public class CustomerController(IMediator mediator) : ApiController
 {
-  private readonly IMediator _mediator = mediator;
+using CustomerApi.Domain.Logging;
+  private readonly IMediator _mediator = mediator;  private readonly ILogEntryChannel _logEntryChannel = logEntryChannel;
+
 
   [Produces("application/json")]
   [ProducesResponseType(StatusCodes.Status201Created)]
