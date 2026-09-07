@@ -6,6 +6,7 @@ using CustomerApi.Application.Queries.Customers.GetPaged;
 using CustomerApi.Domain.Customers.DTO;
 using CustomerApi.SharedKernel;
 using CustomerApi.Web.Attributes;
+using CustomerApi.Domain.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,14 @@ namespace CustomerApi.Web.Controllers;
 [Route("/customers")]
 public class CustomerController(IMediator mediator) : ApiController
 {
-using CustomerApi.Domain.Logging;
-  private readonly IMediator _mediator = mediator;  private readonly ILogEntryChannel _logEntryChannel = logEntryChannel;
+
+  private readonly IMediator _mediator = mediator;
+  private readonly ILogEntryChannel _logEntryChannel;
+
+  public CustomerController(IMediator mediator, ILogEntryChannel logEntryChannel) : this(mediator)
+  {
+    _logEntryChannel = logEntryChannel;
+  }  
 
 
   [Produces("application/json")]
