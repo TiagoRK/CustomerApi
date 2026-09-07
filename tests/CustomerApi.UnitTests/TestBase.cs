@@ -1,4 +1,6 @@
-﻿using Bogus;
+﻿using System.Reflection;
+using Bogus;
+using CustomerApi.Application.Behaviors;
 using CustomerApi.Application.Commands.Customers.Create;
 using CustomerApi.Domain.Customers;
 using MediatR;
@@ -42,7 +44,18 @@ public abstract class TestBase
 
   private void AddMediator()
   {
-    _services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateCustomerCommandHandler>());
+    var mediatRAssemblies = new[]
+    {
+        Assembly.GetAssembly(typeof(Customer)),
+        Assembly.GetAssembly(typeof(CreateCustomerCommand))
+    };
+
+    _services.AddMediatR(cfg =>
+    {
+      cfg.RegisterServicesFromAssemblies(mediatRAssemblies!);
+      cfg.AddOpenBehavior(typeof(CommandValidationPipelineBehavior<,>));
+    });
+
     _serviceProvider = _services.BuildServiceProvider();
     _mediator = _serviceProvider.GetRequiredService<IMediator>();
   }
