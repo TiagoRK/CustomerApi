@@ -15,6 +15,17 @@ services:
     restart: always
     ports:
       - "6379:6379"
+  logworker:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.LogWorker
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=customerapi;Username=postgres;Password=postgres
 volumes:
   db:
     driver: local

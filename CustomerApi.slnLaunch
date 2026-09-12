@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "CustomerApi.Web",
+    "Projects": [
+      {
+        "Path": "src/CustomerApi/CustomerApi.Web.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src/CustomerApi.LogWorker/CustomerApi.LogWorker.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
