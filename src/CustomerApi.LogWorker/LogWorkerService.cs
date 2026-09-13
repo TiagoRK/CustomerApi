@@ -12,7 +12,7 @@ public class LogWorkerService(ILogEntryChannel logEntryChannel, IServiceScopeFac
       try
       {
         using var scope = scopeFactory.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<CustomerDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<LogDbContext>();
         dbContext.LogEntries.Add(entry);
         await dbContext.SaveChangesAsync(stoppingToken);
       }
