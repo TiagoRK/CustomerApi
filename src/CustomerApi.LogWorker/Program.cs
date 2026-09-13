@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
-      services.AddDbContext<CustomerDbContext>(options =>
+      services.AddDbContext<LogDbContext>(options =>
           options.UseNpgsql(context.Configuration.GetConnectionString("Database")));
 
       services.AddSingleton<ILogEntryChannel, LogEntryChannel>();
