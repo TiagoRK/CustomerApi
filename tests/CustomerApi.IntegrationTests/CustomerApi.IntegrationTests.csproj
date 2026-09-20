@@ -23,4 +23,8 @@
     <ProjectReference Include="..\..\src\CustomerApi.Infrastructure\CustomerApi.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../../src/CustomerApi.Domain/CustomerApi.Domain.csproj" />
+    <ProjectReference Include="../../src/CustomerApi.LogWorker/CustomerApi.LogWorker.csproj" />
+  </ItemGroup>
 </Project>

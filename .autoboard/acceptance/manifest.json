@@ -1,0 +1,266 @@
+{
+  "version": 1,
+  "entries": {
+    "7c7970731c0592b2d73f002ac648dd0286d89816797dda4fdcf6668cb243c18c": {
+      "criterion": {
+        "reuseEntryId": "",
+        "supersedesEntryId": "",
+        "changeQuote": "",
+        "id": "AC-1",
+        "requirement": "CustomerDbContext must not reference or expose LogEntry in any form — no DbSet<LogEntry>, no IEntityTypeConfiguration<LogEntry>, and no using import of CustomerApi.Domain.Logging.",
+        "sourceQuote": "Move the logentry from inside the customerDbContext to its on dbContext",
+        "inputsJson": "{}",
+        "expectations": [
+          {
+            "id": "E1",
+            "kind": "behavior",
+            "description": "When the application starts and the Customer read/write path is exercised (e.g. POST /customers), no LogEntry-related table interaction occurs through CustomerDbContext — the customer operation completes successfully and no runtime error referencing LogEntry is raised.",
+            "operator": "exists",
+            "expectedJson": "{\"outcome\":\"customer_persisted_without_log_entry_error\"}"
+          }
+        ]
+      },
+      "kind": "code",
+      "recipe": {
+        "runner": "dotnet_test_8",
+        "existingTestId": "",
+        "criteria": [
+          {
+            "id": "C1",
+            "requirement": "CustomerDbContext must not reference or expose LogEntry in any form — no DbSet<LogEntry>, no IEntityTypeConfiguration<LogEntry>, and no using import of CustomerApi.Domain.Logging. When the application starts and the Customer read/write path is exercised (e.g. POST /customers), no LogEntry-related table interaction occurs through CustomerDbContext — the customer operation completes successfully and no runtime error referencing LogEntry is raised.",
+            "testName": "test_AutoBoardAcceptance_7c7970731c0592b2_C1",
+            "expectationIds": [
+              "E1"
+            ]
+          }
+        ],
+        "blockedReason": ""
+      },
+      "specificationId": "1d8a6f0c28100e8b4d247a312331c8d532076e229fca5aac1205f7577369aff3",
+      "requestQuote": "Move the logentry from inside the customerDbContext to its on dbContext",
+      "supersedes": "",
+      "runner": {
+        "language": "csharp",
+        "project": "tests/CustomerApi.IntegrationTests/CustomerApi.IntegrationTests.csproj",
+        "path": "tests/CustomerApi.IntegrationTests/AutoBoardAcceptance_7c7970731c0592b2.cs",
+        "prefix": "test_AutoBoardAcceptance_7c7970731c0592b2_"
+      },
+      "owned": true,
+      "fileHash": "c934e6d23a026cfc4fd52e56499a6c16995eff47db0242b772f442d8a6243fd5"
+    },
+    "8ab49b12aedcdc7a02a7a07e7c71feb42ab172d3ca2bdd906bdd2dc5c93e1237": {
+      "criterion": {
+        "reuseEntryId": "",
+        "supersedesEntryId": "",
+        "changeQuote": "",
+        "id": "AC-2",
+        "requirement": "A new LogDbContext must exist in the Infrastructure layer, accepting DbContextOptions<LogDbContext>, and must expose a DbSet<LogEntry> property. It must apply the LogEntry mapping configuration via OnModelCreating and must NOT apply the Customer mapping.",
+        "sourceQuote": "Move the logentry from inside the customerDbContext to its on dbContext",
+        "inputsJson": "{}",
+        "expectations": [
+          {
+            "id": "E1",
+            "kind": "behavior",
+            "description": "When the LogWorker processes a log entry fixture, LogDbContext successfully persists the row to the log database without error — confirming DbSet<LogEntry> is reachable, the mapping is applied, and no Customer mapping interference occurs.",
+            "operator": "exists",
+            "expectedJson": "{\"outcome\":\"log_entry_persisted_via_log_db_context\"}"
+          }
+        ]
+      },
+      "kind": "code",
+      "recipe": {
+        "runner": "dotnet_test_8",
+        "existingTestId": "",
+        "criteria": [
+          {
+            "id": "C1",
+            "requirement": "A new LogDbContext must exist in the Infrastructure layer, accepting DbContextOptions<LogDbContext>, and must expose a DbSet<LogEntry> property. It must apply the LogEntry mapping configuration via OnModelCreating and must NOT apply the Customer mapping. When the LogWorker processes a log entry fixture, LogDbContext successfully persists the row to the log database without error — confirming DbSet<LogEntry> is reachable, the mapping is applied, and no Customer mapping interference occurs.",
+            "testName": "test_AutoBoardAcceptance_8ab49b12aedcdc7a_C1",
+            "expectationIds": [
+              "E1"
+            ]
+          }
+        ],
+        "blockedReason": ""
+      },
+      "specificationId": "1d8a6f0c28100e8b4d247a312331c8d532076e229fca5aac1205f7577369aff3",
+      "requestQuote": "Move the logentry from inside the customerDbContext to its on dbContext",
+      "supersedes": "",
+      "runner": {
+        "language": "csharp",
+        "project": "tests/CustomerApi.IntegrationTests/CustomerApi.IntegrationTests.csproj",
+        "path": "tests/CustomerApi.IntegrationTests/AutoBoardAcceptance_8ab49b12aedcdc7a.cs",
+        "prefix": "test_AutoBoardAcceptance_8ab49b12aedcdc7a_"
+      },
+      "owned": true,
+      "fileHash": "44fc8dd63586ec1067c10e62d330b93c292d5bd780139122299128db6143ced4"
+    },
+    "3d6e53ca0e9f3d4f089b88104a6751a093f15fd13bc4245356328e8f4ef17d63": {
+      "criterion": {
+        "reuseEntryId": "",
+        "supersedesEntryId": "",
+        "changeQuote": "",
+        "id": "AC-3",
+        "requirement": "A dedicated IEntityTypeConfiguration<LogEntry> class must exist, following the same structural pattern as the Customer mapping (a Configure method accepting EntityTypeBuilder<LogEntry> that sets table and column configuration derived from the LogEntry entity properties).",
+        "sourceQuote": "create a mapping for it just like it is done for the customer",
+        "inputsJson": "{}",
+        "expectations": [
+          {
+            "id": "E1",
+            "kind": "behavior",
+            "description": "When LogDbContext is used to persist a LogEntry with all properties populated (Id, CorrelationId, Endpoint, Method, Payload, StatusCode, Direction, CreatedAt), EF Core applies the mapping without throwing a model validation or schema exception, confirming the configuration class is wired correctly.",
+            "operator": "exists",
+            "expectedJson": "{\"outcome\":\"log_entry_mapping_valid_no_ef_exception\"}"
+          }
+        ]
+      },
+      "kind": "code",
+      "recipe": {
+        "runner": "dotnet_test_8",
+        "existingTestId": "",
+        "criteria": [
+          {
+            "id": "C1",
+            "requirement": "A dedicated IEntityTypeConfiguration<LogEntry> class must exist, following the same structural pattern as the Customer mapping (a Configure method accepting EntityTypeBuilder<LogEntry> that sets table and column configuration derived from the LogEntry entity properties). When LogDbContext is used to persist a LogEntry with all properties populated, EF Core applies the mapping without throwing a model validation or schema exception.",
+            "testName": "test_AutoBoardAcceptance_3d6e53ca0e9f3d4f_C1",
+            "expectationIds": [
+              "E1"
+            ]
+          }
+        ],
+        "blockedReason": ""
+      },
+      "specificationId": "1d8a6f0c28100e8b4d247a312331c8d532076e229fca5aac1205f7577369aff3",
+      "requestQuote": "create a mapping for it just like it is done for the customer",
+      "supersedes": "",
+      "runner": {
+        "language": "csharp",
+        "project": "tests/CustomerApi.IntegrationTests/CustomerApi.IntegrationTests.csproj",
+        "path": "tests/CustomerApi.IntegrationTests/AutoBoardAcceptance_3d6e53ca0e9f3d4f.cs",
+        "prefix": "test_AutoBoardAcceptance_3d6e53ca0e9f3d4f_"
+      },
+      "owned": true,
+      "fileHash": "427dd475ada564b209d01c212880f138bc43d8372e9d034ec637f831cfedd0d9"
+    },
+    "56b10ffd412f4827c4b59f5e000a1da47d2633852809d60d474d0f733b23f372": {
+      "criterion": {
+        "reuseEntryId": "",
+        "supersedesEntryId": "",
+        "changeQuote": "",
+        "id": "AC-4",
+        "requirement": "The LogWorker project must have its own appsettings.json containing a connection string entry for the log database, and the LogWorker startup must register LogDbContext using that connection string (not CustomerDbContext).",
+        "sourceQuote": "alter the logWorker to have it's on appsettings to insert the connection string for the database it should save its logs to",
+        "inputsJson": "{\"appsettingsPath\":\"src/CustomerApi.LogWorker/appsettings.json\"}",
+        "expectations": [
+          {
+            "id": "E1",
+            "kind": "file",
+            "description": "src/CustomerApi.LogWorker/appsettings.json exists and contains a 'ConnectionStrings' section.",
+            "operator": "contains",
+            "expectedJson": "\"ConnectionStrings\""
+          },
+          {
+            "id": "E2",
+            "kind": "behavior",
+            "description": "When the LogWorker processes a log entry, it reads the connection string from its own appsettings and persists the row via LogDbContext to the configured log database — confirming correct DI registration and appsettings wiring.",
+            "operator": "exists",
+            "expectedJson": "{\"outcome\":\"log_entry_persisted_using_logworker_connection_string\"}"
+          }
+        ]
+      },
+      "kind": "code",
+      "recipe": {
+        "runner": "dotnet_test_8",
+        "projectReferences": [
+          "src/CustomerApi.LogWorker/CustomerApi.LogWorker.csproj",
+          "src/CustomerApi.Infrastructure/CustomerApi.Infrastructure.csproj",
+          "src/CustomerApi.Domain/CustomerApi.Domain.csproj"
+        ],
+        "database": "postgres",
+        "hostProject": "src/CustomerApi.LogWorker/CustomerApi.LogWorker.csproj",
+        "existingTestId": "",
+        "criteria": [
+          {
+            "id": "C1",
+            "requirement": "src/CustomerApi.LogWorker/appsettings.json exists and contains a 'ConnectionStrings' section.",
+            "testName": "test_AutoBoardAcceptance_56b10ffd412f4827_C1",
+            "expectationIds": [
+              "E1"
+            ]
+          },
+          {
+            "id": "C2",
+            "requirement": "When the LogWorker processes a log entry, it reads the connection string from its own appsettings and persists the row via LogDbContext to the configured log database — confirming correct DI registration and appsettings wiring.",
+            "testName": "test_AutoBoardAcceptance_56b10ffd412f4827_C2",
+            "expectationIds": [
+              "E2"
+            ]
+          }
+        ],
+        "blockedReason": ""
+      },
+      "specificationId": "1d8a6f0c28100e8b4d247a312331c8d532076e229fca5aac1205f7577369aff3",
+      "requestQuote": "alter the logWorker to have it's on appsettings to insert the connection string for the database it should save its logs to",
+      "supersedes": "",
+      "runner": {
+        "language": "csharp",
+        "project": "tests/CustomerApi.IntegrationTests/CustomerApi.IntegrationTests.csproj",
+        "path": "tests/CustomerApi.IntegrationTests/AutoBoardAcceptance_56b10ffd412f4827.cs",
+        "prefix": "test_AutoBoardAcceptance_56b10ffd412f4827_",
+        "projectReferences": [
+          "src/CustomerApi.LogWorker/CustomerApi.LogWorker.csproj",
+          "src/CustomerApi.Infrastructure/CustomerApi.Infrastructure.csproj",
+          "src/CustomerApi.Domain/CustomerApi.Domain.csproj"
+        ],
+        "database": "postgres",
+        "hostProject": "src/CustomerApi.LogWorker/CustomerApi.LogWorker.csproj",
+        "hostCaptureClass": "test_AutoBoardAcceptance_56b10ffd412f4827_Host"
+      },
+      "owned": true,
+      "fileHash": "83ce5228f817033dc3031d85b1000fe096b242619f58b030ece236ffd915f50c"
+    },
+    "90e2e9375440bbc25b9f3836e06e2fe99e9950807ea1c6c16208d2433144bbfe": {
+      "criterion": {
+        "reuseEntryId": "",
+        "supersedesEntryId": "",
+        "changeQuote": "",
+        "id": "AC-5",
+        "requirement": "Dockerfile.LogWorker must ensure the LogWorker appsettings.json is available at runtime (either via dotnet publish output inclusion or an explicit COPY instruction).",
+        "sourceQuote": "alter the logWorker to have it's on appsettings to insert the connection string for the database it should save its logs to",
+        "inputsJson": "{\"dockerfilePath\":\"Dockerfile.LogWorker\"}",
+        "expectations": [
+          {
+            "id": "E1",
+            "kind": "file",
+            "description": "Dockerfile.LogWorker contains a reference to 'appsettings' (either in a COPY instruction or the publish step that naturally includes it).",
+            "operator": "contains",
+            "expectedJson": "\"appsettings\""
+          }
+        ]
+      },
+      "kind": "scenario",
+      "recipe": {
+        "criterionId": "AC-5",
+        "runtime": null,
+        "stubs": [],
+        "seeds": [],
+        "action": null,
+        "bindings": [
+          {
+            "expectationId": "E1",
+            "kind": "file",
+            "selector": "text",
+            "query": null,
+            "request": null,
+            "file": "Dockerfile.LogWorker",
+            "waitSeconds": 0
+          }
+        ],
+        "blockedReason": ""
+      },
+      "specificationId": "1d8a6f0c28100e8b4d247a312331c8d532076e229fca5aac1205f7577369aff3",
+      "requestQuote": "alter the logWorker to have it's on appsettings to insert the connection string for the database it should save its logs to",
+      "supersedes": ""
+    }
+  }
+}
