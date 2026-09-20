@@ -1,19 +1,54 @@
-using System.Threading.Channels;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
+using CustomerApi.Domain.Idempotency;
 using CustomerApi.Domain.Logging;
+using StackExchange.Redis;
 
-namespace CustomerApi.Infrastructure.Logging;
+namespace CustomerApi.Infrastructure.Data.Repositories;
 
-public class LogEntryChannel : ILogEntryChannel
+public class LogEntryChannel(IConnectionMultiplexer redis) : ILogEntryChannel
 {
-  private readonly Channel<LogEntry> _channel = Channel.CreateUnbounded<LogEntry>(new UnboundedChannelOptions
-  {
-    SingleReader = true,
-    SingleWriter = false
-  });
+  private const string QueueName = "customer-api:log-entries";
+  private readonly IDatabase _database = redis.GetDatabase();
 
   public ValueTask WriteAsync(LogEntry entry, CancellationToken cancellationToken = default)
-    => _channel.Writer.WriteAsync(entry, cancellationToken);
+    => new(WriteEntryAsync(entry, cancellationToken));
 
-  public IAsyncEnumerable<LogEntry> ReadAllAsync(CancellationToken cancellationToken = default)
-    => _channel.Reader.ReadAllAsync(cancellationToken);
+  public async IAsyncEnumerable<LogEntry> ReadAllAsync(
+    [EnumeratorCancellation] CancellationToken cancellationToken = default)
+  {
+    while (!cancellationToken.IsCancellationRequested)
+    {
+      var value = await _database.ListLeftPopAsync(QueueName);
+      if (value.IsNullOrEmpty)
+      {
+        await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+        continue;
+      }
+
+      var entry = JsonSerializer.Deserialize<LogEntry>(value!);
+      if (entry is not null)
+        yield return entry;
+    }
+  }
+
+  public async ValueTask<bool> WaitToReadAsync(CancellationToken cancellationToken = default)
+  {
+    while (!cancellationToken.IsCancellationRequested)
+    {
+      if (await _database.ListLengthAsync(QueueName) > 0)
+        return true;
+
+      await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken);
+    }
+
+    return false;
+  }
+
+  private async Task WriteEntryAsync(LogEntry entry, CancellationToken cancellationToken)
+  {
+    cancellationToken.ThrowIfCancellationRequested();
+    var payload = JsonSerializer.Serialize(entry);
+    await _database.ListRightPushAsync(QueueName, payload);
+  }
 }

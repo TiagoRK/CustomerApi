@@ -52,6 +52,7 @@ app.UseAuthorization();
 
 app.UseExceptionHandler();
 app.UseMiddleware<IdempotencyMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.MapHealthChecks("/health-check");
 

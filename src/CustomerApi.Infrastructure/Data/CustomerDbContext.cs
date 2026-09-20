@@ -1,4 +1,4 @@
-﻿using CustomerApi.Domain.Logging;
+﻿
 using CustomerApi.Domain.Customers;
 using CustomerApi.Infrastructure.Data.Mappings;
 using Microsoft.EntityFrameworkCore;
@@ -13,5 +13,4 @@ public class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : Db
   {
     modelBuilder.ApplyConfiguration(new CustomerMapping());
   }
-  public DbSet<LogEntry> LogEntries => Set<LogEntry>();
 }
