@@ -1,8 +1,7 @@
-using System.Text.Json;
-using System.Threading.Channels;
+﻿using CustomerApi.Domain.Idempotency;
 using CustomerApi.Domain.Logging;
 
-namespace CustomerApi.Middlewares;
+namespace CustomerApi.Web.Middlewares;
 
 public class RequestLoggingMiddleware(RequestDelegate next)
 {

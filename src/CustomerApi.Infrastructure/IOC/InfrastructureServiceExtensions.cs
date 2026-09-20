@@ -1,4 +1,5 @@
 ﻿using CustomerApi.Domain.Customers;
+using CustomerApi.Domain.Idempotency;
 using CustomerApi.Infrastructure.Data;
 using CustomerApi.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ namespace CustomerApi.Infrastructure.IOC;
 
 public static class InfrastructureServiceExtensions
 {
-  public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ConfigurationManager config, ILogger logger)
+  public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config, ILogger logger)
   {
     var connectionString = config.GetConnectionString("Database");
 
@@ -21,6 +22,10 @@ public static class InfrastructureServiceExtensions
     services.AddScoped<ICustomerRepository, CustomerRepository>();
 
     logger.LogInformation("Repositories registered");
+
+    services.AddSingleton<ILogEntryChannel, LogEntryChannel>();
+
+    logger.LogInformation("Log channel registered");
 
     return services;
   }

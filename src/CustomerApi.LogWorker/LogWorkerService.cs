@@ -1,4 +1,4 @@
-﻿using CustomerApi.Domain.Logging;
+﻿using CustomerApi.Domain.Idempotency;
 using CustomerApi.Infrastructure.Data;
 
 namespace CustomerApi.LogWorker;
